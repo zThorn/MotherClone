@@ -4,7 +4,7 @@
 
 
         preload() {
-            //  Load our actual games assets
+            //  Putting the ass in assets
 
             this.game.load.image('player', '/assets/player.png');
             this.game.load.image('grass', '/assets/grass.png');
@@ -12,7 +12,7 @@
             this.game.load.image('sky', '/assets/sky.png');
 
             this.game.load.tilemap('level', '/assets/spritesheet.json', null, Phaser.Tilemap.TILED_JSON);
-            this.game.load.image('Tiles', 'assets/Tiles.png');
+            this.game.load.image('Tiles', '/assets/Tiles.png');
 
         }
 

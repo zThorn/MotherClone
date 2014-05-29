@@ -71,30 +71,47 @@ var Wallaby;
             this.map = this.add.tilemap('level');
             this.map.addTilesetImage('Tiles');
 
-            layer = this.map.createLayer('Ground');
+            this.map.setCollisionBetween(2, 4);
 
-            layer.resizeWorld();
+            this.ground = this.map.createLayer('Ground');
+
+            this.ground.resizeWorld();
 
             this.player = new Wallaby.Player(this.game, 32, 32);
 
             this.physics.enable(this.player);
+            this.game.physics.arcade.gravity.y = 250;
+
+            this.player.body.bounce.y = 0.2;
+            this.player.body.linearDamping = 1;
+            this.player.body.collideWorldBounds = true;
+
             this.camera.follow(this.player);
-            this.generateMap();
+
+            this.game.input.onDown.add(this.removeTile, this);
+        };
+
+        Level.prototype.removeTile = function () {
+            var x = this.player.x;
+            var y = this.player.y;
+
+            this.map.putTile(1, Math.floor((this.player.x / 32)), Math.ceil((this.player.y / 32) + 1));
         };
 
         Level.prototype.update = function () {
-            this.game.physics.arcade.collide(this.player, layer);
+            this.game.physics.arcade.collide(this.player, this.ground);
             this.player.body.velocity.x = 0;
+
+            if (this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.player.fuel > 0) {
+                this.player.body.velocity.y = -250;
+                this.player.fuel--;
+            }
 
             if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
                 this.player.body.velocity.x = -150;
             } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
                 this.player.body.velocity.x = 150;
             }
-        };
-
-        Level.prototype.generateMap = function () {
-            this.map.fill(3, 0, 0, 32, 8); //Should fill sky tiles...
         };
         return Level;
     })(Phaser.State);
@@ -127,10 +144,11 @@ var Wallaby;
         __extends(Player, _super);
         function Player(game, x, y) {
             _super.call(this, game, x, y, 'player', 0);
+            this.fuel = 2;
 
             this.anchor.setTo(0.5, 0);
 
-            game.add.existing(this);
+            this.game.add.existing(this);
         }
         return Player;
     })(Phaser.Sprite);
@@ -144,14 +162,14 @@ var Wallaby;
             _super.apply(this, arguments);
         }
         Preloader.prototype.preload = function () {
-            //  Load our actual games assets
+            //  Putting the ass in assets
             this.game.load.image('player', '/assets/player.png');
             this.game.load.image('grass', '/assets/grass.png');
             this.game.load.image('dirt', '/assets/dirt.png');
             this.game.load.image('sky', '/assets/sky.png');
 
             this.game.load.tilemap('level', '/assets/spritesheet.json', null, Phaser.Tilemap.TILED_JSON);
-            this.game.load.image('Tiles', 'assets/Tiles.png');
+            this.game.load.image('Tiles', '/assets/Tiles.png');
         };
 
         Preloader.prototype.create = function () {
