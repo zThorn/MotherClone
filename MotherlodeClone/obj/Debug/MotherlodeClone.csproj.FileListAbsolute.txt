@@ -1,0 +1,6 @@
+c:\users\thorn_000\documents\visual studio 2013\Projects\MotherlodeClone\MotherlodeClone\bin\MotherlodeClone.dll.config
+c:\users\thorn_000\documents\visual studio 2013\Projects\MotherlodeClone\MotherlodeClone\bin\MotherlodeClone.dll
+c:\users\thorn_000\documents\visual studio 2013\Projects\MotherlodeClone\MotherlodeClone\bin\MotherlodeClone.pdb
+c:\users\thorn_000\documents\visual studio 2013\Projects\MotherlodeClone\MotherlodeClone\obj\Debug\MotherlodeClone.dll
+c:\users\thorn_000\documents\visual studio 2013\Projects\MotherlodeClone\MotherlodeClone\obj\Debug\MotherlodeClone.pdb
+C:\Users\thorn_000\documents\visual studio 2013\Projects\MotherlodeClone\MotherlodeClone\obj\Debug\MotherlodeClone.csprojResolveAssemblyReference.cache
