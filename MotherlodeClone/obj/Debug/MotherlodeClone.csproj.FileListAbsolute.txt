@@ -4,3 +4,9 @@ C:\Users\zthorn\Documents\Visual Studio 2013\Projects\MotherClone-master\Motherl
 C:\Users\zthorn\Documents\Visual Studio 2013\Projects\MotherClone-master\MotherlodeClone\obj\Debug\MotherlodeClone.csprojResolveAssemblyReference.cache
 C:\Users\zthorn\Documents\Visual Studio 2013\Projects\MotherClone-master\MotherlodeClone\obj\Debug\MotherlodeClone.dll
 C:\Users\zthorn\Documents\Visual Studio 2013\Projects\MotherClone-master\MotherlodeClone\obj\Debug\MotherlodeClone.pdb
+C:\Users\thorn_000\documents\visual studio 2013\Projects\MotherlodeClone\MotherlodeClone\bin\MotherlodeClone.dll.config
+C:\Users\thorn_000\documents\visual studio 2013\Projects\MotherlodeClone\MotherlodeClone\bin\MotherlodeClone.dll
+C:\Users\thorn_000\documents\visual studio 2013\Projects\MotherlodeClone\MotherlodeClone\bin\MotherlodeClone.pdb
+C:\Users\thorn_000\documents\visual studio 2013\Projects\MotherlodeClone\MotherlodeClone\obj\Debug\MotherlodeClone.csprojResolveAssemblyReference.cache
+C:\Users\thorn_000\documents\visual studio 2013\Projects\MotherlodeClone\MotherlodeClone\obj\Debug\MotherlodeClone.dll
+C:\Users\thorn_000\documents\visual studio 2013\Projects\MotherlodeClone\MotherlodeClone\obj\Debug\MotherlodeClone.pdb

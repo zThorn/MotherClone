@@ -2,7 +2,9 @@
 
     export class Player extends Phaser.Sprite {
 
-        fuel: number = 2;
+        fuel: number = 150;
+        score: number = 0;
+        cash: number = 0;
         constructor(game: Phaser.Game, x: number, y: number) {
 
             super(game, x, y, 'player', 0);
