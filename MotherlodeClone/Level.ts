@@ -37,7 +37,7 @@
             this.camera.follow(this.player);
             this.player.body.tilePadding.x = 50;
             this.player.body.tilePadding.y = 50;
-            this.player.body.maxVelocity.y = 150;
+            this.player.body.maxVelocity.y = 125;
             this.game.input.onDown.add(this.removeTile, this);
 
             //Fuel Text
