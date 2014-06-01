@@ -79,21 +79,25 @@ var Wallaby;
             this.player.body.linearDamping = 1;
             this.player.body.collideWorldBounds = true;
             this.camera.follow(this.player);
-
+            this.player.body.tilePadding.x = 50;
+            this.player.body.tilePadding.y = 50;
+            this.player.body.maxVelocity.y = 150;
             this.game.input.onDown.add(this.removeTile, this);
 
             //Fuel Text
             this.txt = this.game.add.group();
-            this.fuelText = this.game.add.text(this.game.world.centerX + 270, 0, 'Fuel: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
+            this.fuelText = this.game.add.text(this.game.world.centerX + 200, 0, 'Fuel: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
             this.txt.bringToTop(this.fuelText);
 
             //Score Text
-            this.scoreText = this.game.add.text(this.game.world.centerX + 200, 50, 'Score: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
+            this.scoreText = this.game.add.text(this.game.world.centerX + 200, 50, 'Cash: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
             this.txt.fixedToCamera = true;
 
             //FPS
-            this.fpsText = this.game.add.text(this.game.world.centerX + 290, 100, 'Score: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
+            this.fpsText = this.game.add.text(this.game.world.centerX + 200, 100, 'FPS: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
             this.game.time.advancedTiming = true;
+
+            this.populateWorld();
         };
 
         Level.prototype.removeTile = function () {
@@ -103,6 +107,26 @@ var Wallaby;
             this.player.score = this.player.score + this.getTileValue(tile);
 
             this.map.putTile(4, Math.floor((this.player.x / 32)), Math.ceil((this.player.y / 32) + 1));
+        };
+
+        Level.prototype.populateWorld = function () {
+            var chance = 0;
+            for (var i = 0; i < 30; i++) {
+                for (var j = 8; j < 100; j++) {
+                    chance = Math.random();
+
+                    if (chance >= .98 && j >= 50)
+                        this.map.putTile(8, i, j);
+                    else if (chance >= .94 && j >= 30)
+                        this.map.putTile(3, i, j);
+                    else if (chance >= .9 && j >= 25)
+                        this.map.putTile(2, i, j);
+                    else if (chance >= .9)
+                        this.map.putTile(6, i, j);
+                    else if (chance > .8)
+                        this.map.putTile(1, i, j);
+                }
+            }
         };
 
         Level.prototype.getTileValue = function (index) {
@@ -162,13 +186,13 @@ var Wallaby;
             } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.ESC)) {
                 this.restart();
             }
-            this.fuelText.setText(this.player.fuel.toString());
+            this.fuelText.setText("Fuel: " + this.player.fuel.toString());
             this.txt.bringToTop(this);
 
             this.scoreText.setText("Cash: $" + this.player.score.toString());
             this.txt.bringToTop(this);
 
-            this.fpsText.setText(this.game.time.fps.toString());
+            this.fpsText.setText("FPS: " + this.game.time.fps.toString());
         };
 
         //Resets player
