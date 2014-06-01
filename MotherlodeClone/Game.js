@@ -103,7 +103,7 @@ var Wallaby;
             var y = Math.ceil((this.player.y / 32) + 1);
             var tile = this.map.getTile(x, y).index;
 
-            if (this.game.input.mousePointer.timeDown - this.game.input.mousePointer.timeUp >= 500) {
+            if (this.game.input.mousePointer.timeDown - this.game.input.mousePointer.timeUp >= 100) {
                 this.player.score = this.player.score + this.getTileValue(tile);
                 this.map.putTile(4, Math.floor((this.player.x / 32)), Math.ceil((this.player.y / 32) + 1));
             }
@@ -179,9 +179,9 @@ var Wallaby;
                 this.player.fuel--;
             }
 
-            if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
+            if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT) || this.game.input.keyboard.isDown(Phaser.Keyboard.A)) {
                 this.player.body.velocity.x = -150;
-            } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
+            } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) || this.game.input.keyboard.isDown(Phaser.Keyboard.D)) {
                 this.player.body.velocity.x = 150;
             } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.ESC)) {
                 this.restart();
