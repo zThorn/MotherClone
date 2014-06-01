@@ -86,12 +86,16 @@
                     total = 100;
                     break
             }
-            this.displayTotal(total);
+            if(total != 0)
+                this.displayTotal(total);
             return total;
         }
 
         displayTotal(total: number) {
-       
+            var i = this.game.add.text(this.player.x-10 , this.player.y - 35,"+"+total.toString(), { fontSize: '12px', fill: 'white', stroke: "black", strokeThickness: 5 });
+            i.alpha = 1;
+            this.game.add.tween(i).to({ alpha: 0 }, 500, Phaser.Easing.Linear.None, true, 0, 0, false);
+            this.game.add.tween(i).to({ x: this.player.x - 200, y: this.player.y - 250 }, 1000, Phaser.Easing.Linear.None, true, 0, 0, false);
 
         }
 
