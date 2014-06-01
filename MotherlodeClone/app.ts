@@ -2,4 +2,4 @@
 
     var game = new Wallaby.Game();
 
-};
+}; 

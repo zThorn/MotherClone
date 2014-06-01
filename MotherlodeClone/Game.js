@@ -60,8 +60,6 @@ var Wallaby;
         __extends(Level, _super);
         function Level() {
             _super.apply(this, arguments);
-            this.numberOfCols = 32;
-            this.numberOfRows = 32;
         }
         Level.prototype.create = function () {
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -90,8 +88,12 @@ var Wallaby;
             this.txt.bringToTop(this.fuelText);
 
             //Score Text
-            this.scoreText = this.game.add.text(this.game.world.centerX + 297, 50, 'Score: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
+            this.scoreText = this.game.add.text(this.game.world.centerX + 200, 50, 'Score: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
             this.txt.fixedToCamera = true;
+
+            //FPS
+            this.fpsText = this.game.add.text(this.game.world.centerX + 290, 100, 'Score: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
+            this.game.time.advancedTiming = true;
         };
 
         Level.prototype.removeTile = function () {
@@ -163,8 +165,10 @@ var Wallaby;
             this.fuelText.setText(this.player.fuel.toString());
             this.txt.bringToTop(this);
 
-            this.scoreText.setText(this.player.score.toString());
+            this.scoreText.setText("Cash: $" + this.player.score.toString());
             this.txt.bringToTop(this);
+
+            this.fpsText.setText(this.game.time.fps.toString());
         };
 
         //Resets player

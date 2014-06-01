@@ -26,10 +26,13 @@
     <Content Include="index.html" />
     <Content Include="phaser.js" />
     <Content Include="phaser.min.js" />
-    <Content Include="web.config" />
+    <Content Include="web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\spritesheet.json" />
+    <None Include="test.pubxml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -80,6 +83,7 @@
     <TypeScriptSourceMap>False</TypeScriptSourceMap>
     <TypeScriptModuleKind>none</TypeScriptModuleKind>
     <TypeScriptOutFile>game.js</TypeScriptOutFile>
+    <TypeScriptOutDir>C:\Users\thorn_000\Documents\Visual Studio 2013\Projects\MotherlodeClone\MotherlodeClone</TypeScriptOutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <TypeScriptTarget>ES5</TypeScriptTarget>

@@ -6,13 +6,12 @@
         background: Phaser.Sprite;
         music: Phaser.Sound;
         player: Wallaby.Player;
-        numberOfCols: number = 32;
-        numberOfRows: number = 32;
         map: Phaser.Tilemap;
         sky: Phaser.TilemapLayer;
         ground: Phaser.TilemapLayer;
         fuelText: Phaser.Text;
         scoreText: Phaser.Text;
+        fpsText: Phaser.Text;
         txt: Phaser.Group;
 
         create() {
@@ -44,8 +43,12 @@
             this.txt.bringToTop(this.fuelText);
 
             //Score Text
-            this.scoreText = this.game.add.text(this.game.world.centerX + 297, 50, 'Score: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
+            this.scoreText = this.game.add.text(this.game.world.centerX + 200, 50, 'Score: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
             this.txt.fixedToCamera = true;
+
+            //FPS
+            this.fpsText = this.game.add.text(this.game.world.centerX + 290, 100, 'Score: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
+            this.game.time.advancedTiming = true;
         }
 
         removeTile() {
@@ -71,7 +74,7 @@
                     total = 35;
                     break;
 
-                case 4:   
+                case 4:   //Sky tile
                   break;
                 case 5:
                     total = 1;
@@ -125,8 +128,10 @@
             this.fuelText.setText(this.player.fuel.toString());
             this.txt.bringToTop(this);
 
-            this.scoreText.setText(this.player.score.toString());
+            this.scoreText.setText("Cash: $"+this.player.score.toString());
             this.txt.bringToTop(this);
+
+            this.fpsText.setText(this.game.time.fps.toString());
         }
 
 
