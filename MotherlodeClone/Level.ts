@@ -16,34 +16,27 @@
         txt: Phaser.Group;
 
         create() {
-
-
-            this.player = new Player(this.game, 32, 32);
-
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
+            this.game.physics.arcade.gravity.y = 500;
+
+           
 
             this.map = this.add.tilemap('level');
             this.map.addTilesetImage('Tiles');
 
-            this.map.setCollisionBetween(2, 4);
-
+            this.map.setCollisionBetween(1, 3);
+            this.map.setCollisionBetween(5, 8);
             this.ground = this.map.createLayer('Ground');
-
-            this.ground.resizeWorld();
+            this.ground.resizeWorld();   
 
             this.player = new Player(this.game, 32, 32);
-            
             this.physics.enable(this.player);
-            this.game.physics.arcade.gravity.y = 250;
-
             this.player.body.bounce.y = 0.2;
             this.player.body.linearDamping = 1;
             this.player.body.collideWorldBounds = true;
-
             this.camera.follow(this.player);
 
             this.game.input.onDown.add(this.removeTile, this);
-
 
             //Fuel Text
             this.txt = this.game.add.group();
@@ -56,13 +49,50 @@
         }
 
         removeTile() {
-            var x = this.player.x;
-            var y = this.player.y;
-            this.player.score += 1;
+            var x = Math.floor(this.player.x/32);
+            var y = Math.ceil((this.player.y / 32)+1);
+            var tile = this.map.getTile(x, y).index;
+            this.player.score = this.player.score + this.getTileValue(tile);
 
-            //I should probably store tile values in a tiled property....
+            this.map.putTile(4, Math.floor((this.player.x / 32)), Math.ceil((this.player.y / 32) + 1));
+        }
 
-            this.map.putTile(1, Math.floor((this.player.x / 32)), Math.ceil((this.player.y / 32) + 1));
+        getTileValue(index: number) {
+            var total = 0;
+
+            switch (index) {
+                case 1:
+                    total = 5;
+                    break;
+                case 2:
+                    total = 25;
+                    break;
+                case 3:
+                    total = 35;
+                    break;
+
+                case 4:   
+                  break;
+                case 5:
+                    total = 1;
+                    break;
+                case 6:
+                    total = 10;
+                    break;
+                case 7:
+                    total = 1;
+                    break;
+                case 8:
+                    total = 100;
+                    break
+            }
+            this.displayTotal(total);
+            return total;
+        }
+
+        displayTotal(total: number) {
+       
+
         }
 
         update() {
