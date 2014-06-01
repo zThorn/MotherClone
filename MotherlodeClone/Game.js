@@ -54,8 +54,6 @@ var Wallaby;
 })(Wallaby || (Wallaby = {}));
 var Wallaby;
 (function (Wallaby) {
-    var layer;
-
     var Level = (function (_super) {
         __extends(Level, _super);
         function Level() {
@@ -81,7 +79,7 @@ var Wallaby;
             this.camera.follow(this.player);
             this.player.body.tilePadding.x = 50;
             this.player.body.tilePadding.y = 50;
-            this.player.body.maxVelocity.y = 150;
+            this.player.body.maxVelocity.y = 125;
             this.game.input.onDown.add(this.removeTile, this);
 
             //Fuel Text
@@ -104,9 +102,11 @@ var Wallaby;
             var x = Math.floor(this.player.x / 32);
             var y = Math.ceil((this.player.y / 32) + 1);
             var tile = this.map.getTile(x, y).index;
-            this.player.score = this.player.score + this.getTileValue(tile);
 
-            this.map.putTile(4, Math.floor((this.player.x / 32)), Math.ceil((this.player.y / 32) + 1));
+            if (this.game.input.mousePointer.timeDown - this.game.input.mousePointer.timeUp >= 500) {
+                this.player.score = this.player.score + this.getTileValue(tile);
+                this.map.putTile(4, Math.floor((this.player.x / 32)), Math.ceil((this.player.y / 32) + 1));
+            }
         };
 
         Level.prototype.populateWorld = function () {

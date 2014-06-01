@@ -1,6 +1,5 @@
 ﻿module Wallaby {
-    var layer;
-    
+
     export class Level extends Phaser.State {
 
         background: Phaser.Sprite;
@@ -60,9 +59,11 @@
             var x = Math.floor(this.player.x/32);
             var y = Math.ceil((this.player.y / 32)+1);
             var tile = this.map.getTile(x, y).index;
-            this.player.score = this.player.score + this.getTileValue(tile);
 
-            this.map.putTile(4, Math.floor((this.player.x / 32)), Math.ceil((this.player.y / 32) + 1));
+            if (this.game.input.mousePointer.timeDown - this.game.input.mousePointer.timeUp >= 500) {
+                this.player.score = this.player.score + this.getTileValue(tile);
+                this.map.putTile(4, Math.floor((this.player.x / 32)), Math.ceil((this.player.y / 32) + 1));
+            }
         }
 
         populateWorld() {
