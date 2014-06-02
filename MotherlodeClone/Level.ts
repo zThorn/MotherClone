@@ -16,9 +16,6 @@
         create() {
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
             this.game.physics.arcade.gravity.y = 500;
-            
-
-           
 
             this.map = this.add.tilemap('level');
             this.map.addTilesetImage('Tiles');
@@ -36,20 +33,20 @@
             this.camera.follow(this.player);
             this.player.body.tilePadding.x = 50;
             this.player.body.tilePadding.y = 50;
-            this.player.body.maxVelocity.y = 125;
+            this.player.body.maxVelocity.y = 250;
             this.game.input.onDown.add(this.removeTile, this);
 
             //Fuel Text
             this.txt = this.game.add.group();
-            this.fuelText = this.game.add.text(this.game.world.centerX+200, 0, 'Fuel: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 },this.txt);
+            this.fuelText = this.game.add.text(this.game.world.centerX+190, 0, 'Fuel: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 },this.txt);
             this.txt.bringToTop(this.fuelText);
 
             //Score Text
-            this.scoreText = this.game.add.text(this.game.world.centerX + 200, 50, 'Cash: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
+            this.scoreText = this.game.add.text(this.game.world.centerX + 190, 50, 'Cash: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
             this.txt.fixedToCamera = true;
 
             //FPS
-            this.fpsText = this.game.add.text(this.game.world.centerX + 200, 100, 'FPS: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
+            this.fpsText = this.game.add.text(this.game.world.centerX + 190, 100, 'FPS: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
             this.game.time.advancedTiming = true;
 
             this.populateWorld();
@@ -60,9 +57,10 @@
             var y = Math.ceil((this.player.y / 32)+1);
             var tile = this.map.getTile(x, y).index;
 
-            if (this.game.input.mousePointer.timeDown - this.game.input.mousePointer.timeUp >= 100) {
+            if (this.game.input.mousePointer.timeDown - this.game.input.mousePointer.timeUp >= 100 && this.player.fuel>0) {
                 this.player.score = this.player.score + this.getTileValue(tile);
-                this.map.putTile(4, Math.floor((this.player.x / 32)), Math.ceil((this.player.y / 32) + 1));
+                //this.player.fuel -= 5;
+                this.map.putTile(4, x, y);
             }
         }
 
@@ -82,49 +80,45 @@
                         this.map.putTile(6, i, j)
                     else if (chance > .8) 
                         this.map.putTile(1, i, j);
-                    
-
-
                 }
             }
-
-
         }
 
+        //Gets the amount that each tile should be worth
         getTileValue(index: number) {
             var total = 0;
 
             switch (index) {
-                case 1:
+                case 1: //Tin
                     total = 5;
                     break;
-                case 2:
+                case 2: //Gold
                     total = 25;
                     break;
-                case 3:
+                case 3: //Emerald
                     total = 35;
                     break;
-
                 case 4:   //Sky tile
                   break;
-                case 5:
+                case 5:   //Dirt
                     total = 1;
                     break;
-                case 6:
+                case 6:   //Iron
                     total = 10;
                     break;
-                case 7:
+                case 7: //Grass
                     total = 1;
                     break;
-                case 8:
+                case 8: //Diamond
                     total = 100;
                     break
             }
-            if(total != 0)
+            if(total != 0)  //Sky
                 this.displayTotal(total);
             return total;
         }
 
+        //Handles neat tweening effect when blocks get destroyed
         displayTotal(total: number) {
             var i = this.game.add.text(this.player.x-10 , this.player.y - 35,"+"+total.toString(), { fontSize: '12px', fill: 'white', stroke: "black", strokeThickness: 5 });
             i.alpha = 1;
@@ -145,7 +139,6 @@
 
 
             if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT) || this.game.input.keyboard.isDown(Phaser.Keyboard.A)) {
-
                 this.player.body.velocity.x = -150;
             }
             else if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) || this.game.input.keyboard.isDown(Phaser.Keyboard.D)){

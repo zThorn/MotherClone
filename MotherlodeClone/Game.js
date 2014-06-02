@@ -79,20 +79,20 @@ var Wallaby;
             this.camera.follow(this.player);
             this.player.body.tilePadding.x = 50;
             this.player.body.tilePadding.y = 50;
-            this.player.body.maxVelocity.y = 125;
+            this.player.body.maxVelocity.y = 250;
             this.game.input.onDown.add(this.removeTile, this);
 
             //Fuel Text
             this.txt = this.game.add.group();
-            this.fuelText = this.game.add.text(this.game.world.centerX + 200, 0, 'Fuel: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
+            this.fuelText = this.game.add.text(this.game.world.centerX + 190, 0, 'Fuel: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
             this.txt.bringToTop(this.fuelText);
 
             //Score Text
-            this.scoreText = this.game.add.text(this.game.world.centerX + 200, 50, 'Cash: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
+            this.scoreText = this.game.add.text(this.game.world.centerX + 190, 50, 'Cash: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
             this.txt.fixedToCamera = true;
 
             //FPS
-            this.fpsText = this.game.add.text(this.game.world.centerX + 200, 100, 'FPS: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
+            this.fpsText = this.game.add.text(this.game.world.centerX + 190, 100, 'FPS: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
             this.game.time.advancedTiming = true;
 
             this.populateWorld();
@@ -103,9 +103,11 @@ var Wallaby;
             var y = Math.ceil((this.player.y / 32) + 1);
             var tile = this.map.getTile(x, y).index;
 
-            if (this.game.input.mousePointer.timeDown - this.game.input.mousePointer.timeUp >= 100) {
+            if (this.game.input.mousePointer.timeDown - this.game.input.mousePointer.timeUp >= 100 && this.player.fuel > 0) {
                 this.player.score = this.player.score + this.getTileValue(tile);
-                this.map.putTile(4, Math.floor((this.player.x / 32)), Math.ceil((this.player.y / 32) + 1));
+
+                //this.player.fuel -= 5;
+                this.map.putTile(4, x, y);
             }
         };
 
@@ -129,6 +131,7 @@ var Wallaby;
             }
         };
 
+        //Gets the amount that each tile should be worth
         Level.prototype.getTileValue = function (index) {
             var total = 0;
 
@@ -142,7 +145,6 @@ var Wallaby;
                 case 3:
                     total = 35;
                     break;
-
                 case 4:
                     break;
                 case 5:
@@ -163,6 +165,7 @@ var Wallaby;
             return total;
         };
 
+        //Handles neat tweening effect when blocks get destroyed
         Level.prototype.displayTotal = function (total) {
             var i = this.game.add.text(this.player.x - 10, this.player.y - 35, "+" + total.toString(), { fontSize: '12px', fill: 'white', stroke: "black", strokeThickness: 5 });
             i.alpha = 1;
@@ -233,7 +236,7 @@ var Wallaby;
         __extends(Player, _super);
         function Player(game, x, y) {
             _super.call(this, game, x, y, 'player', 0);
-            this.fuel = 150;
+            this.fuel = 500;
             this.score = 0;
             this.cash = 0;
 
