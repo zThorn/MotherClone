@@ -12,6 +12,7 @@
         scoreText: Phaser.Text;
         fpsText: Phaser.Text;
         txt: Phaser.Group;
+        timeCheck: number;
 
         create() {
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -34,7 +35,7 @@
             this.player.body.tilePadding.x = 50;
             this.player.body.tilePadding.y = 50;
             this.player.body.maxVelocity.y = 250;
-            this.game.input.onDown.add(this.removeTile, this);
+            //this.game.input.onDown.add(this.removeTile, this);
 
             //Fuel Text
             this.txt = this.game.add.group();
@@ -128,9 +129,22 @@
         }
 
         update() {
+            var iterations = 1;
 
             this.game.physics.arcade.collide(this.player, this.ground);
             this.player.body.velocity.x = 0;
+
+            if (this.game.input.mousePointer.isDown && this.game.input.mousePointer.duration > 1000) {
+                if (this.game.input.mousePointer.duration > 1000 && this.game.input.mousePointer.duration < 1050) {
+                    this.removeTile();
+                    this.timeCheck = this.game.time.time;
+                } else if (this.game.time.time - this.timeCheck > 1000) {
+                    this.removeTile();
+                    this.timeCheck = this.game.time.time;
+                }
+
+                }
+            
 
             if (this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.player.fuel>0) {
                 this.player.body.velocity.y = -250;

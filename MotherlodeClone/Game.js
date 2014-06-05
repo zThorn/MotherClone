@@ -80,8 +80,8 @@ var Wallaby;
             this.player.body.tilePadding.x = 50;
             this.player.body.tilePadding.y = 50;
             this.player.body.maxVelocity.y = 250;
-            this.game.input.onDown.add(this.removeTile, this);
 
+            //this.game.input.onDown.add(this.removeTile, this);
             //Fuel Text
             this.txt = this.game.add.group();
             this.fuelText = this.game.add.text(this.game.world.centerX + 190, 0, 'Fuel: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
@@ -174,8 +174,20 @@ var Wallaby;
         };
 
         Level.prototype.update = function () {
+            var iterations = 1;
+
             this.game.physics.arcade.collide(this.player, this.ground);
             this.player.body.velocity.x = 0;
+
+            if (this.game.input.mousePointer.isDown && this.game.input.mousePointer.duration > 1000) {
+                if (this.game.input.mousePointer.duration > 1000 && this.game.input.mousePointer.duration < 1050) {
+                    this.removeTile();
+                    this.timeCheck = this.game.time.time;
+                } else if (this.game.time.time - this.timeCheck > 1000) {
+                    this.removeTile();
+                    this.timeCheck = this.game.time.time;
+                }
+            }
 
             if (this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.player.fuel > 0) {
                 this.player.body.velocity.y = -250;
