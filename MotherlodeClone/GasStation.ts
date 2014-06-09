@@ -1,14 +1,14 @@
 ﻿module Wallaby {
 
-    export class Player extends Phaser.Sprite {
+    export class GasStation extends Phaser.Sprite {
 
-        fuel: number = 500;
+        fuel_fill_rate: number = 5;
         score: number = 0;
         cash: number = 0;
         drillLevel: number = 2;
         constructor(game: Phaser.Game, x: number, y: number) {
 
-            super(game, x, y, 'player', 0);
+            super(game, x, y, 'gasStation', 0);
 
             this.anchor.setTo(0.5, 0);
 
@@ -16,10 +16,10 @@
 
         }
 
-       
 
-        
+
+
 
     }
 
-}
+} 

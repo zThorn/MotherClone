@@ -5,6 +5,7 @@
         background: Phaser.Sprite;
         music: Phaser.Sound;
         player: Wallaby.Player;
+        gasStation: Phaser.Sprite;
         map: Phaser.Tilemap;
         sky: Phaser.TilemapLayer;
         ground: Phaser.TilemapLayer;
@@ -15,6 +16,8 @@
         timeCheck: number;
 
         create() {
+
+            
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
             this.game.physics.arcade.gravity.y = 500;
 
@@ -26,6 +29,8 @@
             this.ground = this.map.createLayer('Ground');
             this.ground.resizeWorld();   
 
+            this.gasStation = new GasStation(this.game, 128, 160);
+
             this.player = new Player(this.game, 32, 32);
             this.physics.enable(this.player);
             this.player.body.bounce.y = 0.2;
@@ -35,7 +40,8 @@
             this.player.body.tilePadding.x = 50;
             this.player.body.tilePadding.y = 50;
             this.player.body.maxVelocity.y = 250;
-            //this.game.input.onDown.add(this.removeTile, this);
+
+            
 
             //Fuel Text
             this.txt = this.game.add.group();
@@ -50,6 +56,7 @@
             this.fpsText = this.game.add.text(this.game.world.centerX + 190, 100, 'FPS: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
             this.game.time.advancedTiming = true;
 
+
             this.populateWorld();
         }
 
@@ -60,7 +67,7 @@
 
             if (this.game.input.mousePointer.timeDown - this.game.input.mousePointer.timeUp >= 100 && this.player.fuel>0) {
                 this.player.score = this.player.score + this.getTileValue(tile);
-                //this.player.fuel -= 5;
+                this.player.fuel -= 5;
                 this.map.putTile(4, x, y);
             }
         }
@@ -134,11 +141,11 @@
             this.game.physics.arcade.collide(this.player, this.ground);
             this.player.body.velocity.x = 0;
 
-            if (this.game.input.mousePointer.isDown && this.game.input.mousePointer.duration > 1000) {
-                if (this.game.input.mousePointer.duration > 1000 && this.game.input.mousePointer.duration < 1050) {
+            if (this.game.input.mousePointer.isDown && this.game.input.mousePointer.duration > 100*this.player.drillLevel) {
+                if (this.game.input.mousePointer.duration > 100 * this.player.drillLevel && this.game.input.mousePointer.duration < 100 * this.player.drillLevel+50) {
                     this.removeTile();
                     this.timeCheck = this.game.time.time;
-                } else if (this.game.time.time - this.timeCheck > 1000) {
+                } else if (this.game.time.time - this.timeCheck > 100*this.player.drillLevel) {
                     this.removeTile();
                     this.timeCheck = this.game.time.time;
                 }
@@ -161,6 +168,14 @@
             }
             else if(this.game.input.keyboard.isDown(Phaser.Keyboard.ESC)) {
                 this.restart();
+            }
+
+            if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.gasStation.overlap(this.player) && this.player.score >=5) {
+                this.player.fuel += 5;
+                this.player.score -= 5;
+            } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.Q)) {
+                if(this.player.drillLevel>0)
+                    this.player.drillLevel--;
             }
             this.fuelText.setText("Fuel: "+this.player.fuel.toString());
             this.txt.bringToTop(this);

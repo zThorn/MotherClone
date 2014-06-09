@@ -19,6 +19,7 @@
   <ItemGroup>
     <Content Include="app.css" />
     <Content Include="assets\dirt.png" />
+    <Content Include="assets\gas_station0.png" />
     <Content Include="assets\grass.png" />
     <Content Include="assets\player.png" />
     <Content Include="assets\sky.png" />
@@ -44,6 +45,7 @@
     <TypeScriptCompile Include="app.ts" />
     <TypeScriptCompile Include="Boot.ts" />
     <TypeScriptCompile Include="Game.ts" />
+    <TypeScriptCompile Include="GasStation.ts" />
     <TypeScriptCompile Include="Level.ts" />
     <TypeScriptCompile Include="MainMenu.ts" />
     <TypeScriptCompile Include="phaser.d.ts" />

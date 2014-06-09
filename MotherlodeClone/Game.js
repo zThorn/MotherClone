@@ -54,6 +54,25 @@ var Wallaby;
 })(Wallaby || (Wallaby = {}));
 var Wallaby;
 (function (Wallaby) {
+    var GasStation = (function (_super) {
+        __extends(GasStation, _super);
+        function GasStation(game, x, y) {
+            _super.call(this, game, x, y, 'gasStation', 0);
+            this.fuel_fill_rate = 5;
+            this.score = 0;
+            this.cash = 0;
+            this.drillLevel = 2;
+
+            this.anchor.setTo(0.5, 0);
+
+            this.game.add.existing(this);
+        }
+        return GasStation;
+    })(Phaser.Sprite);
+    Wallaby.GasStation = GasStation;
+})(Wallaby || (Wallaby = {}));
+var Wallaby;
+(function (Wallaby) {
     var Level = (function (_super) {
         __extends(Level, _super);
         function Level() {
@@ -71,6 +90,8 @@ var Wallaby;
             this.ground = this.map.createLayer('Ground');
             this.ground.resizeWorld();
 
+            this.gasStation = new Wallaby.GasStation(this.game, 128, 160);
+
             this.player = new Wallaby.Player(this.game, 32, 32);
             this.physics.enable(this.player);
             this.player.body.bounce.y = 0.2;
@@ -81,7 +102,6 @@ var Wallaby;
             this.player.body.tilePadding.y = 50;
             this.player.body.maxVelocity.y = 250;
 
-            //this.game.input.onDown.add(this.removeTile, this);
             //Fuel Text
             this.txt = this.game.add.group();
             this.fuelText = this.game.add.text(this.game.world.centerX + 190, 0, 'Fuel: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
@@ -105,8 +125,7 @@ var Wallaby;
 
             if (this.game.input.mousePointer.timeDown - this.game.input.mousePointer.timeUp >= 100 && this.player.fuel > 0) {
                 this.player.score = this.player.score + this.getTileValue(tile);
-
-                //this.player.fuel -= 5;
+                this.player.fuel -= 5;
                 this.map.putTile(4, x, y);
             }
         };
@@ -179,11 +198,11 @@ var Wallaby;
             this.game.physics.arcade.collide(this.player, this.ground);
             this.player.body.velocity.x = 0;
 
-            if (this.game.input.mousePointer.isDown && this.game.input.mousePointer.duration > 1000) {
-                if (this.game.input.mousePointer.duration > 1000 && this.game.input.mousePointer.duration < 1050) {
+            if (this.game.input.mousePointer.isDown && this.game.input.mousePointer.duration > 100 * this.player.drillLevel) {
+                if (this.game.input.mousePointer.duration > 100 * this.player.drillLevel && this.game.input.mousePointer.duration < 100 * this.player.drillLevel + 50) {
                     this.removeTile();
                     this.timeCheck = this.game.time.time;
-                } else if (this.game.time.time - this.timeCheck > 1000) {
+                } else if (this.game.time.time - this.timeCheck > 100 * this.player.drillLevel) {
                     this.removeTile();
                     this.timeCheck = this.game.time.time;
                 }
@@ -200,6 +219,14 @@ var Wallaby;
                 this.player.body.velocity.x = 150;
             } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.ESC)) {
                 this.restart();
+            }
+
+            if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.gasStation.overlap(this.player) && this.player.score >= 5) {
+                this.player.fuel += 5;
+                this.player.score -= 5;
+            } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.Q)) {
+                if (this.player.drillLevel > 0)
+                    this.player.drillLevel--;
             }
             this.fuelText.setText("Fuel: " + this.player.fuel.toString());
             this.txt.bringToTop(this);
@@ -251,6 +278,7 @@ var Wallaby;
             this.fuel = 500;
             this.score = 0;
             this.cash = 0;
+            this.drillLevel = 2;
 
             this.anchor.setTo(0.5, 0);
 
@@ -268,12 +296,12 @@ var Wallaby;
             _super.apply(this, arguments);
         }
         Preloader.prototype.preload = function () {
-            //  Putting the ass in assets
             this.game.load.image('player', '/assets/player.png');
             this.game.load.image('grass', '/assets/grass.png');
             this.game.load.image('dirt', '/assets/dirt.png');
             this.game.load.image('sky', '/assets/sky.png');
 
+            this.game.load.image('gasStation', '/assets/gas_station0.png');
             this.game.load.tilemap('level', '/assets/spritesheet.json', null, Phaser.Tilemap.TILED_JSON);
             this.game.load.image('Tiles', '/assets/Tiles.png');
         };
