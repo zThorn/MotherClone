@@ -91,6 +91,7 @@ var Wallaby;
             this.ground.resizeWorld();
 
             this.gasStation = new Wallaby.GasStation(this.game, 128, 160);
+            this.vendor = new Wallaby.Vendor(this.game, 256, 196);
 
             this.player = new Wallaby.Player(this.game, 32, 32);
             this.physics.enable(this.player);
@@ -104,16 +105,19 @@ var Wallaby;
 
             //Fuel Text
             this.txt = this.game.add.group();
+            this.txt.fixedToCamera = true;
             this.fuelText = this.game.add.text(this.game.world.centerX + 190, 0, 'Fuel: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
-            this.txt.bringToTop(this.fuelText);
 
+            //this.txt.bringToTop(this.fuelText);
             //Score Text
             this.scoreText = this.game.add.text(this.game.world.centerX + 190, 50, 'Cash: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
-            this.txt.fixedToCamera = true;
 
             //FPS
             this.fpsText = this.game.add.text(this.game.world.centerX + 190, 100, 'FPS: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
             this.game.time.advancedTiming = true;
+
+            //Drill Level
+            this.drillText = this.game.add.text(this.game.world.centerX + 180, 150, 'Drill: ', { fontSize: '32px', fill: 'white', stroke: 'black', strokeThickness: 5 }, this.txt);
 
             this.populateWorld();
         };
@@ -124,7 +128,7 @@ var Wallaby;
             var tile = this.map.getTile(x, y).index;
 
             if (this.game.input.mousePointer.timeDown - this.game.input.mousePointer.timeUp >= 100 && this.player.fuel > 0) {
-                this.player.score = this.player.score + this.getTileValue(tile);
+                this.player.cash = this.player.cash + this.getTileValue(tile);
                 this.player.fuel -= 5;
                 this.map.putTile(4, x, y);
             }
@@ -221,20 +225,23 @@ var Wallaby;
                 this.restart();
             }
 
-            if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.gasStation.overlap(this.player) && this.player.score >= 5) {
+            if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.gasStation.overlap(this.player) && this.player.cash >= 5) {
                 this.player.fuel += 5;
-                this.player.score -= 5;
-            } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.Q)) {
-                if (this.player.drillLevel > 0)
-                    this.player.drillLevel--;
+                this.player.cash -= 2;
+            } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.vendor.overlap(this.player) && this.player.cash >= this.vendor.multiplier * this.vendor.initial_cost) {
+                this.player.cash -= this.vendor.multiplier * this.vendor.initial_cost;
+                this.vendor.drill_upgrades += 1;
+                this.player.drillLevel++;
             }
             this.fuelText.setText("Fuel: " + this.player.fuel.toString());
-            this.txt.bringToTop(this);
 
-            this.scoreText.setText("Cash: $" + this.player.score.toString());
-            this.txt.bringToTop(this);
+            //  this.txt.bringToTop(this);
+            this.scoreText.setText("Cash: $" + this.player.cash.toString());
 
+            // this.txt.bringToTop(this);
             this.fpsText.setText("FPS: " + this.game.time.fps.toString());
+
+            this.drillText.setText("Drill: " + this.player.drillLevel.toString());
         };
 
         //Resets player
@@ -242,7 +249,7 @@ var Wallaby;
             this.player.x = 30;
             this.player.y = 30;
             this.player.fuel = 150;
-            this.player.score = 0;
+            this.player.cash = 1000;
         };
         return Level;
     })(Phaser.State);
@@ -301,6 +308,7 @@ var Wallaby;
             this.game.load.image('dirt', '/assets/dirt.png');
             this.game.load.image('sky', '/assets/sky.png');
 
+            this.game.load.image('vendor', '/assets/vendor.png');
             this.game.load.image('gasStation', '/assets/gas_station0.png');
             this.game.load.tilemap('level', '/assets/spritesheet.json', null, Phaser.Tilemap.TILED_JSON);
             this.game.load.image('Tiles', '/assets/Tiles.png');
@@ -316,4 +324,22 @@ var Wallaby;
         return Preloader;
     })(Phaser.State);
     Wallaby.Preloader = Preloader;
+})(Wallaby || (Wallaby = {}));
+var Wallaby;
+(function (Wallaby) {
+    var Vendor = (function (_super) {
+        __extends(Vendor, _super);
+        function Vendor(game, x, y) {
+            _super.call(this, game, x, y, 'vendor', 0);
+            this.drill_upgrades = 1;
+            this.multiplier = 1.5;
+            this.initial_cost = 100;
+
+            this.anchor.setTo(0.5, 0);
+
+            this.game.add.existing(this);
+        }
+        return Vendor;
+    })(Phaser.Sprite);
+    Wallaby.Vendor = Vendor;
 })(Wallaby || (Wallaby = {}));

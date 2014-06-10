@@ -24,6 +24,7 @@
     <Content Include="assets\player.png" />
     <Content Include="assets\sky.png" />
     <Content Include="assets\Tiles.png" />
+    <Content Include="assets\vendor.png" />
     <Content Include="index.html" />
     <Content Include="phaser.js" />
     <Content Include="phaser.min.js" />
@@ -51,6 +52,7 @@
     <TypeScriptCompile Include="phaser.d.ts" />
     <TypeScriptCompile Include="Player.ts" />
     <TypeScriptCompile Include="Preloader.ts" />
+    <TypeScriptCompile Include="Vendor.ts" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

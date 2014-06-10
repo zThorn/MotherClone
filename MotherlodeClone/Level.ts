@@ -5,15 +5,17 @@
         background: Phaser.Sprite;
         music: Phaser.Sound;
         player: Wallaby.Player;
-        gasStation: Phaser.Sprite;
+        gasStation: Wallaby.GasStation;
         map: Phaser.Tilemap;
         sky: Phaser.TilemapLayer;
         ground: Phaser.TilemapLayer;
         fuelText: Phaser.Text;
         scoreText: Phaser.Text;
+        drillText: Phaser.Text;
         fpsText: Phaser.Text;
         txt: Phaser.Group;
         timeCheck: number;
+        vendor: Wallaby.Vendor;
 
         create() {
 
@@ -30,6 +32,7 @@
             this.ground.resizeWorld();   
 
             this.gasStation = new GasStation(this.game, 128, 160);
+            this.vendor = new Vendor(this.game, 256, 196);
 
             this.player = new Player(this.game, 32, 32);
             this.physics.enable(this.player);
@@ -45,16 +48,20 @@
 
             //Fuel Text
             this.txt = this.game.add.group();
+            this.txt.fixedToCamera = true;
             this.fuelText = this.game.add.text(this.game.world.centerX+190, 0, 'Fuel: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 },this.txt);
-            this.txt.bringToTop(this.fuelText);
+            //this.txt.bringToTop(this.fuelText);
 
             //Score Text
             this.scoreText = this.game.add.text(this.game.world.centerX + 190, 50, 'Cash: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
-            this.txt.fixedToCamera = true;
+            
 
             //FPS
             this.fpsText = this.game.add.text(this.game.world.centerX + 190, 100, 'FPS: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
             this.game.time.advancedTiming = true;
+
+            //Drill Level
+            this.drillText = this.game.add.text(this.game.world.centerX + 180, 150, 'Drill: ', { fontSize: '32px', fill: 'white', stroke: 'black', strokeThickness: 5 }, this.txt);
 
 
             this.populateWorld();
@@ -66,7 +73,7 @@
             var tile = this.map.getTile(x, y).index;
 
             if (this.game.input.mousePointer.timeDown - this.game.input.mousePointer.timeUp >= 100 && this.player.fuel>0) {
-                this.player.score = this.player.score + this.getTileValue(tile);
+                this.player.cash = this.player.cash + this.getTileValue(tile);
                 this.player.fuel -= 5;
                 this.map.putTile(4, x, y);
             }
@@ -170,20 +177,25 @@
                 this.restart();
             }
 
-            if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.gasStation.overlap(this.player) && this.player.score >=5) {
+            if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.gasStation.overlap(this.player) && this.player.cash >=5) {
                 this.player.fuel += 5;
-                this.player.score -= 5;
-            } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.Q)) {
-                if(this.player.drillLevel>0)
-                    this.player.drillLevel--;
+                this.player.cash -= 2;
+
+            } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.vendor.overlap(this.player)
+                        && this.player.cash >= this.vendor.multiplier*this.vendor.initial_cost) {
+                this.player.cash -= this.vendor.multiplier * this.vendor.initial_cost;
+                this.vendor.drill_upgrades += 1;
+                this.player.drillLevel++;
             }
             this.fuelText.setText("Fuel: "+this.player.fuel.toString());
-            this.txt.bringToTop(this);
+          //  this.txt.bringToTop(this);
 
-            this.scoreText.setText("Cash: $"+this.player.score.toString());
-            this.txt.bringToTop(this);
+            this.scoreText.setText("Cash: $"+this.player.cash.toString());
+           // this.txt.bringToTop(this);
 
-            this.fpsText.setText("FPS: "+this.game.time.fps.toString());
+            this.fpsText.setText("FPS: " + this.game.time.fps.toString());
+
+            this.drillText.setText("Drill: " + this.player.drillLevel.toString());
         }
 
 
@@ -192,7 +204,7 @@
             this.player.x = 30;
             this.player.y = 30;
             this.player.fuel = 150;
-            this.player.score = 0;
+            this.player.cash = 1000;
         }
 
     }
