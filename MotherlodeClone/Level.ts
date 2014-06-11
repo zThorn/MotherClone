@@ -16,7 +16,9 @@
         txt: Phaser.Group;
         timeCheck: number;
         vendor: Wallaby.Vendor;
-
+        buyButton: Phaser.Button;
+        shopBackground: Phaser.Sprite;
+        callBackFunction: Function;
         create() {
 
             
@@ -51,7 +53,6 @@
             this.txt = this.game.add.group();
             this.txt.fixedToCamera = true;
             this.fuelText = this.game.add.text(this.game.world.centerX+190, 0, 'Fuel: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 },this.txt);
-            //this.txt.bringToTop(this.fuelText);
 
             //Score Text
             this.scoreText = this.game.add.text(this.game.world.centerX + 190, 50, 'Cash: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
@@ -66,7 +67,21 @@
                              { fontSize: '32px', fill: 'white', stroke: 'black', strokeThickness: 5 }, this.txt);
 
 
+           
+            this.shopBackground = new Phaser.Sprite(this.game, this.player.x + 100, this.player.y + 100, 'shopbackground');
+            this.shopBackground.visible = false;
+            this.shopBackground.fixedToCamera = true;
+            this.game.add.existing(this.shopBackground);
+
+            this.buyButton = new Phaser.Button(this.game, this.player.x + 130, this.player.y + 130, 'buy');
+            this.buyButton.visible = false;
+            this.buyButton.fixedToCamera = true;
+            this.game.add.existing(this.buyButton);
+            this.callBackFunction = this.vendor.buyButtonClick(this.player);
+
+            
             this.populateWorld();
+            
         }
 
         //This is the primary method to add in a "Blank"(Currently sky) tile at a 
@@ -83,6 +98,9 @@
                 this.map.putTile(4, x, y);
             }
         }
+
+
+ 
 
         populateWorld() {
             var chance = 0;
@@ -187,16 +205,18 @@
                 this.restart();
             }
 
-            if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.gasStation.overlap(this.player) && this.player.cash >=5) {
+            if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.gasStation.overlap(this.player) && this.player.cash >= 5) {
                 this.player.fuel += 5;
                 this.player.cash -= 2;
 
-            } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.vendor.overlap(this.player)
-                        && this.player.cash >= this.vendor.multiplier*this.vendor.initial_cost) {
-                this.player.cash -= this.vendor.multiplier * this.vendor.initial_cost;
-                this.vendor.drill_upgrades += 1;
-                this.player.drillLevel++;
-            }
+            } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.vendor.overlap(this.player)) {
+                this.shopBackground.visible = true;
+                this.buyButton.visible = true;
+
+            } else if (this.vendor.x+100 < this.player.x || this.vendor.x-100 > this.player.x) {
+                this.shopBackground.visible = false;
+                this.buyButton.visible = false;
+            } 
             this.fuelText.setText("Fuel: "+this.player.fuel.toString());
 
             this.scoreText.setText("Cash: $"+this.player.cash.toString());
@@ -214,6 +234,8 @@
             this.player.fuel = 150;
             this.player.cash = 1000;
         }
+
+       
 
     }
 

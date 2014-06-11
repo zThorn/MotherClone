@@ -15,6 +15,8 @@
             this.game.load.image('gasStation', '/assets/gas_station0.png');
             this.game.load.tilemap('level', '/assets/spritesheet.json', null, Phaser.Tilemap.TILED_JSON);
             this.game.load.image('Tiles', '/assets/Tiles.png');
+            this.game.load.image('shopbackground', '/assets/sbg.png');
+            this.game.load.image('buy', '/assets/buybutton.png');
 
         }
 
