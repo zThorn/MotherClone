@@ -28,22 +28,23 @@
 
             this.map.setCollisionBetween(1, 3);
             this.map.setCollisionBetween(5, 8);
+
             this.ground = this.map.createLayer('Ground');
             this.ground.resizeWorld();   
 
             this.gasStation = new GasStation(this.game, 128, 160);
-            this.vendor = new Vendor(this.game, 256, 196);
-
+            this.vendor = new Vendor(this.game, 256, 192);
             this.player = new Player(this.game, 32, 32);
+
             this.physics.enable(this.player);
             this.player.body.bounce.y = 0.2;
             this.player.body.linearDamping = 1;
             this.player.body.collideWorldBounds = true;
-            this.camera.follow(this.player);
             this.player.body.tilePadding.x = 50;
             this.player.body.tilePadding.y = 50;
             this.player.body.maxVelocity.y = 250;
 
+            this.camera.follow(this.player);
             
 
             //Fuel Text
@@ -61,17 +62,21 @@
             this.game.time.advancedTiming = true;
 
             //Drill Level
-            this.drillText = this.game.add.text(this.game.world.centerX + 180, 150, 'Drill: ', { fontSize: '32px', fill: 'white', stroke: 'black', strokeThickness: 5 }, this.txt);
+            this.drillText = this.game.add.text(this.game.world.centerX + 180, 150, 'Drill: ',
+                             { fontSize: '32px', fill: 'white', stroke: 'black', strokeThickness: 5 }, this.txt);
 
 
             this.populateWorld();
         }
 
+        //This is the primary method to add in a "Blank"(Currently sky) tile at a 
+        //location located directly below the player
         removeTile() {
             var x = Math.floor(this.player.x/32);
             var y = Math.ceil((this.player.y / 32)+1);
             var tile = this.map.getTile(x, y).index;
 
+            //Prevents rapid block removal
             if (this.game.input.mousePointer.timeDown - this.game.input.mousePointer.timeUp >= 100 && this.player.fuel>0) {
                 this.player.cash = this.player.cash + this.getTileValue(tile);
                 this.player.fuel -= 5;
@@ -81,25 +86,26 @@
 
         populateWorld() {
             var chance = 0;
+            //Generates world 30x100 game tiles.(32x32)
             for (var i = 0; i < 30; i++) {
                 for (var j = 8; j < 100; j++) {
                     chance = Math.random();
 
                     if (chance >= .98 && j >= 50)
-                        this.map.putTile(8, i, j);
+                        this.map.putTile(8, i, j);  //Spawn Diamond
                     else if (chance >= .94 && j >= 30)
-                        this.map.putTile(3, i, j);
+                        this.map.putTile(3, i, j);  //Spawn "Emerald"
                     else if (chance >= .9 && j >= 25)
-                        this.map.putTile(2, i, j);
+                        this.map.putTile(2, i, j);  //Spawn Gold
                     else if (chance >= .9)
-                        this.map.putTile(6, i, j)
+                        this.map.putTile(6, i, j)  //Spawn Iron
                     else if (chance > .8) 
-                        this.map.putTile(1, i, j);
+                        this.map.putTile(1, i, j);  //Spawn Tin
                 }
             }
         }
 
-        //Gets the amount that each tile should be worth
+        //Gets the amount that each tile should be worth(Added to this.player.cash)
         getTileValue(index: number) {
             var total = 0;
 
@@ -150,14 +156,17 @@
 
             if (this.game.input.mousePointer.isDown && this.game.input.mousePointer.duration > 100*this.player.drillLevel) {
                 if (this.game.input.mousePointer.duration > 100 * this.player.drillLevel && this.game.input.mousePointer.duration < 100 * this.player.drillLevel+50) {
+
                     this.removeTile();
                     this.timeCheck = this.game.time.time;
-                } else if (this.game.time.time - this.timeCheck > 100*this.player.drillLevel) {
+
+                } else if (this.game.time.time - this.timeCheck > 100 * this.player.drillLevel) {
+
                     this.removeTile();
                     this.timeCheck = this.game.time.time;
                 }
 
-                }
+             }
             
 
             if (this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.player.fuel>0) {
@@ -169,8 +178,9 @@
             if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT) || this.game.input.keyboard.isDown(Phaser.Keyboard.A)) {
                 this.player.body.velocity.x = -150;
             }
-            else if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) || this.game.input.keyboard.isDown(Phaser.Keyboard.D)){
-                this.player.body.velocity.x = 150;
+            else if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)
+                  || this.game.input.keyboard.isDown(Phaser.Keyboard.D)) {
+                         this.player.body.velocity.x = 150;
 
             }
             else if(this.game.input.keyboard.isDown(Phaser.Keyboard.ESC)) {
@@ -188,10 +198,8 @@
                 this.player.drillLevel++;
             }
             this.fuelText.setText("Fuel: "+this.player.fuel.toString());
-          //  this.txt.bringToTop(this);
 
             this.scoreText.setText("Cash: $"+this.player.cash.toString());
-           // this.txt.bringToTop(this);
 
             this.fpsText.setText("FPS: " + this.game.time.fps.toString());
 
