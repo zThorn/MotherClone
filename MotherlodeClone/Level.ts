@@ -18,7 +18,9 @@
         vendor: Wallaby.Vendor;
         buyButton: Phaser.Button;
         shopBackground: Phaser.Sprite;
-        callBackFunction: Function;
+
+
+
         create() {
 
             
@@ -77,13 +79,14 @@
             this.buyButton.visible = false;
             this.buyButton.fixedToCamera = true;
             this.game.add.existing(this.buyButton);
-            this.callBackFunction = this.vendor.buyButtonClick(this.player);
-
+            this.buyButton.inputEnabled = true;
+            this.buyButton.events.onInputDown.add(function(){this.vendor.buyButtonClick(this.player) },this);
             
             this.populateWorld();
             
         }
 
+      
         //This is the primary method to add in a "Blank"(Currently sky) tile at a 
         //location located directly below the player
         removeTile() {
@@ -171,40 +174,17 @@
 
             this.game.physics.arcade.collide(this.player, this.ground);
             this.player.body.velocity.x = 0;
+            this.player.update();
 
             if (this.game.input.mousePointer.isDown && this.game.input.mousePointer.duration > 100*this.player.drillLevel) {
                 if (this.game.input.mousePointer.duration > 100 * this.player.drillLevel && this.game.input.mousePointer.duration < 100 * this.player.drillLevel+50) {
-
                     this.removeTile();
                     this.timeCheck = this.game.time.time;
-
                 } else if (this.game.time.time - this.timeCheck > 100 * this.player.drillLevel) {
-
                     this.removeTile();
                     this.timeCheck = this.game.time.time;
                 }
-
              }
-            
-
-            if (this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.player.fuel>0) {
-                this.player.body.velocity.y = -250;
-                this.player.fuel--;
-            }
-
-
-            if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT) || this.game.input.keyboard.isDown(Phaser.Keyboard.A)) {
-                this.player.body.velocity.x = -150;
-            }
-            else if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)
-                  || this.game.input.keyboard.isDown(Phaser.Keyboard.D)) {
-                         this.player.body.velocity.x = 150;
-
-            }
-            else if(this.game.input.keyboard.isDown(Phaser.Keyboard.ESC)) {
-                this.restart();
-            }
-
             if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.gasStation.overlap(this.player) && this.player.cash >= 5) {
                 this.player.fuel += 5;
                 this.player.cash -= 2;
@@ -225,18 +205,5 @@
 
             this.drillText.setText("Drill: " + this.player.drillLevel.toString());
         }
-
-
-        //Resets player 
-        restart() {
-            this.player.x = 30;
-            this.player.y = 30;
-            this.player.fuel = 150;
-            this.player.cash = 1000;
-        }
-
-       
-
     }
-
 } 

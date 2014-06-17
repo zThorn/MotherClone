@@ -129,7 +129,10 @@ var Wallaby;
             this.buyButton.visible = false;
             this.buyButton.fixedToCamera = true;
             this.game.add.existing(this.buyButton);
-            this.callBackFunction = this.vendor.buyButtonClick(this.player);
+            this.buyButton.inputEnabled = true;
+            this.buyButton.events.onInputDown.add(function () {
+                this.vendor.buyButtonClick(this.player);
+            }, this);
 
             this.populateWorld();
         };
@@ -217,6 +220,7 @@ var Wallaby;
 
             this.game.physics.arcade.collide(this.player, this.ground);
             this.player.body.velocity.x = 0;
+            this.player.update();
 
             if (this.game.input.mousePointer.isDown && this.game.input.mousePointer.duration > 100 * this.player.drillLevel) {
                 if (this.game.input.mousePointer.duration > 100 * this.player.drillLevel && this.game.input.mousePointer.duration < 100 * this.player.drillLevel + 50) {
@@ -227,20 +231,6 @@ var Wallaby;
                     this.timeCheck = this.game.time.time;
                 }
             }
-
-            if (this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.player.fuel > 0) {
-                this.player.body.velocity.y = -250;
-                this.player.fuel--;
-            }
-
-            if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT) || this.game.input.keyboard.isDown(Phaser.Keyboard.A)) {
-                this.player.body.velocity.x = -150;
-            } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) || this.game.input.keyboard.isDown(Phaser.Keyboard.D)) {
-                this.player.body.velocity.x = 150;
-            } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.ESC)) {
-                this.restart();
-            }
-
             if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.gasStation.overlap(this.player) && this.player.cash >= 5) {
                 this.player.fuel += 5;
                 this.player.cash -= 2;
@@ -258,14 +248,6 @@ var Wallaby;
             this.fpsText.setText("FPS: " + this.game.time.fps.toString());
 
             this.drillText.setText("Drill: " + this.player.drillLevel.toString());
-        };
-
-        //Resets player
-        Level.prototype.restart = function () {
-            this.player.x = 30;
-            this.player.y = 30;
-            this.player.fuel = 150;
-            this.player.cash = 1000;
         };
         return Level;
     })(Phaser.State);
@@ -307,6 +289,27 @@ var Wallaby;
 
             this.game.add.existing(this);
         }
+        Player.prototype.update = function () {
+            if (this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.fuel > 0) {
+                this.body.velocity.y = -250;
+                this.fuel--;
+            }
+
+            if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT) || this.game.input.keyboard.isDown(Phaser.Keyboard.A)) {
+                this.body.velocity.x = -150;
+            } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) || this.game.input.keyboard.isDown(Phaser.Keyboard.D)) {
+                this.body.velocity.x = 150;
+            } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.ESC)) {
+                this.restart();
+            }
+        };
+
+        Player.prototype.restart = function () {
+            this.x = 30;
+            this.y = 30;
+            this.fuel = 150;
+            this.cash = 1000;
+        };
         return Player;
     })(Phaser.Sprite);
     Wallaby.Player = Player;
@@ -358,9 +361,11 @@ var Wallaby;
             this.game.add.existing(this);
         }
         Vendor.prototype.buyButtonClick = function (player) {
-            player.cash -= this.multiplier * this.initial_cost;
-            this.drill_upgrades += 1;
-            player.drillLevel += 1;
+            if (player.cash >= this.multiplier * this.initial_cost) {
+                player.cash -= this.multiplier * this.initial_cost;
+                this.drill_upgrades += 1;
+                player.drillLevel += 1;
+            }
 
             return;
         };

@@ -16,8 +16,33 @@
 
         }
 
-       
+        update() {
+            if (this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.fuel > 0) {
+                this.body.velocity.y = -250;
+                this.fuel--;
+            }
 
+
+            if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT) || this.game.input.keyboard.isDown(Phaser.Keyboard.A)) {
+                this.body.velocity.x = -150;
+            }
+            else if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)
+                || this.game.input.keyboard.isDown(Phaser.Keyboard.D)) {
+                this.body.velocity.x = 150;
+
+            }
+            else if (this.game.input.keyboard.isDown(Phaser.Keyboard.ESC)) {
+                this.restart();
+            }
+
+        }
+       
+        restart() {
+            this.x = 30;
+            this.y = 30;
+            this.fuel = 150;
+            this.cash = 1000;
+        }
         
 
     }
