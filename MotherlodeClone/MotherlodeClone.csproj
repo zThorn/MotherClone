@@ -18,6 +18,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="app.css" />
+    <Content Include="assets\blank.png" />
     <Content Include="assets\dirt.png" />
     <Content Include="assets\gas_station0.png" />
     <Content Include="assets\grass.png" />

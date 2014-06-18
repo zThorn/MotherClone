@@ -18,21 +18,16 @@
         vendor: Wallaby.Vendor;
         buyButton: Phaser.Button;
         shopBackground: Phaser.Sprite;
+        drillIcon: Phaser.Sprite;
 
 
-
-        create() {
-
-            
+        create() {       
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
             this.game.physics.arcade.gravity.y = 500;
-
             this.map = this.add.tilemap('level');
             this.map.addTilesetImage('Tiles');
-
             this.map.setCollisionBetween(1, 3);
             this.map.setCollisionBetween(5, 8);
-
             this.ground = this.map.createLayer('Ground');
             this.ground.resizeWorld();   
 
@@ -40,50 +35,43 @@
             this.vendor = new Vendor(this.game, 256, 192);
             this.player = new Player(this.game, 32, 32);
 
-            this.physics.enable(this.player);
-            this.player.body.bounce.y = 0.2;
-            this.player.body.linearDamping = 1;
-            this.player.body.collideWorldBounds = true;
-            this.player.body.tilePadding.x = 50;
-            this.player.body.tilePadding.y = 50;
-            this.player.body.maxVelocity.y = 250;
-
-            this.camera.follow(this.player);
-            
-
-            //Fuel Text
-            this.txt = this.game.add.group();
-            this.txt.fixedToCamera = true;
-            this.fuelText = this.game.add.text(this.game.world.centerX+190, 0, 'Fuel: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 },this.txt);
-
-            //Score Text
-            this.scoreText = this.game.add.text(this.game.world.centerX + 190, 50, 'Cash: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
-            
-
-            //FPS
-            this.fpsText = this.game.add.text(this.game.world.centerX + 190, 100, 'FPS: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
-            this.game.time.advancedTiming = true;
-
-            //Drill Level
-            this.drillText = this.game.add.text(this.game.world.centerX + 180, 150, 'Drill: ',
-                             { fontSize: '32px', fill: 'white', stroke: 'black', strokeThickness: 5 }, this.txt);
-
-
-           
+            //Shop Assets
             this.shopBackground = new Phaser.Sprite(this.game, this.player.x + 100, this.player.y + 100, 'shopbackground');
             this.shopBackground.visible = false;
             this.shopBackground.fixedToCamera = true;
             this.game.add.existing(this.shopBackground);
 
-            this.buyButton = new Phaser.Button(this.game, this.player.x + 130, this.player.y + 130, 'buy');
+            this.buyButton = new Phaser.Button(this.game, this.player.x + 410, this.player.y + 130, 'buy');
             this.buyButton.visible = false;
             this.buyButton.fixedToCamera = true;
             this.game.add.existing(this.buyButton);
             this.buyButton.inputEnabled = true;
-            this.buyButton.events.onInputDown.add(function(){this.vendor.buyButtonClick(this.player) },this);
+            this.buyButton.events.onInputDown.add(function () { this.vendor.buyButtonClick(this.player) }, this);
+
+            this.drillIcon = new Phaser.Sprite(this.game, this.player.x + 130, this.player.y + 130, 'drillUpgrade');
+            this.drillIcon.visible = false;
+            this.drillIcon.fixedToCamera = true;
+            this.game.add.existing(this.drillIcon);
             
+            
+            //Fuel Text
+            this.txt = this.game.add.group();
+            this.txt.fixedToCamera = true;
+            this.fuelText = this.game.add.text(this.game.world.centerX - 475, 0, 'Fuel: ',
+                            { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
+            //Score Text
+            this.scoreText = this.game.add.text(this.game.world.centerX - 475, 50, 'Cash: ',
+                            { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
+            //FPS
+            this.fpsText = this.game.add.text(this.game.world.centerX - 475, 100, 'FPS: ',
+                            { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
+            this.game.time.advancedTiming = true;
+
+            //Drill Level
+            this.drillText = this.game.add.text(this.game.world.centerX - 475, 150, 'Drill: ',
+                            { fontSize: '32px', fill: 'white', stroke: 'black', strokeThickness: 5 }, this.txt);
+            this.camera.follow(this.player);
             this.populateWorld();
-            
         }
 
       
@@ -98,7 +86,7 @@
             if (this.game.input.mousePointer.timeDown - this.game.input.mousePointer.timeUp >= 100 && this.player.fuel>0) {
                 this.player.cash = this.player.cash + this.getTileValue(tile);
                 this.player.fuel -= 5;
-                this.map.putTile(4, x, y);
+                this.map.putTile(4,x,y);
             }
         }
 
@@ -111,11 +99,10 @@
             for (var i = 0; i < 30; i++) {
                 for (var j = 8; j < 100; j++) {
                     chance = Math.random();
-
                     if (chance >= .98 && j >= 50)
                         this.map.putTile(8, i, j);  //Spawn Diamond
                     else if (chance >= .94 && j >= 30)
-                        this.map.putTile(3, i, j);  //Spawn "Emerald"
+                        this.map.putTile(3, i, j);  //Spawn Emerald
                     else if (chance >= .9 && j >= 25)
                         this.map.putTile(2, i, j);  //Spawn Gold
                     else if (chance >= .9)
@@ -175,32 +162,33 @@
             this.game.physics.arcade.collide(this.player, this.ground);
             this.player.body.velocity.x = 0;
             this.player.update();
+            
 
-            if (this.game.input.mousePointer.isDown && this.game.input.mousePointer.duration > 100*this.player.drillLevel) {
-                if (this.game.input.mousePointer.duration > 100 * this.player.drillLevel && this.game.input.mousePointer.duration < 100 * this.player.drillLevel+50) {
+            if (this.game.input.mousePointer.isDown && this.game.input.mousePointer.duration > 100 * this.player.drillLevel) {
+                if (this.game.input.mousePointer.duration > 100 * this.player.drillLevel && this.game.input.mousePointer.duration < 100 * this.player.drillLevel + 50) {
                     this.removeTile();
                     this.timeCheck = this.game.time.time;
                 } else if (this.game.time.time - this.timeCheck > 100 * this.player.drillLevel) {
                     this.removeTile();
                     this.timeCheck = this.game.time.time;
                 }
-             }
+            }
             if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.gasStation.overlap(this.player) && this.player.cash >= 5) {
                 this.player.fuel += 5;
                 this.player.cash -= 2;
-
             } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.vendor.overlap(this.player)) {
                 this.shopBackground.visible = true;
                 this.buyButton.visible = true;
-
-            } else if (this.vendor.x+100 < this.player.x || this.vendor.x-100 > this.player.x) {
+                this.drillIcon.visible = true;
+            } else if (this.vendor.x + 100 < this.player.x || this.vendor.x - 100 > this.player.x ||
+                       this.game.input.keyboard.isDown(Phaser.Keyboard.ESC)) {
                 this.shopBackground.visible = false;
                 this.buyButton.visible = false;
+                this.drillIcon.visible = false;
             } 
+
             this.fuelText.setText("Fuel: "+this.player.fuel.toString());
-
             this.scoreText.setText("Cash: $"+this.player.cash.toString());
-
             this.fpsText.setText("FPS: " + this.game.time.fps.toString());
 
             this.drillText.setText("Drill: " + this.player.drillLevel.toString());

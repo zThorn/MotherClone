@@ -15,6 +15,7 @@
             this.game.add.existing(this);
 
         }
+
         buyButtonClick(player: Wallaby.Player): Function {
             if (player.cash >= this.multiplier * this.initial_cost) {
                 player.cash -= this.multiplier * this.initial_cost;

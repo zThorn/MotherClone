@@ -10,6 +10,8 @@
             this.game.load.image('grass', '/assets/grass.png');
             this.game.load.image('dirt', '/assets/dirt.png');
             this.game.load.image('sky', '/assets/sky.png');
+            this.game.load.image('blank', '/assets/blank.png');
+            this.game.load.image('drillUpgrade', '/assets/drill_upgrade_icon.png');
 
             this.game.load.image('vendor', '/assets/vendor.png');
             this.game.load.image('gasStation', '/assets/gas_station0.png');
