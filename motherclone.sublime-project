@@ -1,0 +1,20 @@
+{
+    "folders": [
+        {
+            "follow_symlinks": true, 
+            "path": "C:\\xampp\\htdocs\\MotherlodeClone"
+        }, 
+        {
+            "follow_symlinks": true, 
+            "path": "."
+        }
+    ], 
+    "settings": {
+        "typescript": {
+            "roots": [
+                "C:\\xampp\\htdocs\\MotherlodeClone\\Game.ts",
+                "C:\\xampp\\htdocs\\MotherlodeClone\\phaser.d.ts"
+            ]
+        }
+    }
+}
