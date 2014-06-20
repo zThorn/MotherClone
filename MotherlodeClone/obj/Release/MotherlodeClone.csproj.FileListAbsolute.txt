@@ -1,5 +1,0 @@
-C:\Users\thorn_000\documents\visual studio 2013\Projects\MotherlodeClone\MotherlodeClone\bin\MotherlodeClone.dll.config
-C:\Users\thorn_000\documents\visual studio 2013\Projects\MotherlodeClone\MotherlodeClone\bin\MotherlodeClone.dll
-C:\Users\thorn_000\documents\visual studio 2013\Projects\MotherlodeClone\MotherlodeClone\bin\MotherlodeClone.pdb
-C:\Users\thorn_000\documents\visual studio 2013\Projects\MotherlodeClone\MotherlodeClone\obj\Release\MotherlodeClone.dll
-C:\Users\thorn_000\documents\visual studio 2013\Projects\MotherlodeClone\MotherlodeClone\obj\Release\MotherlodeClone.pdb
