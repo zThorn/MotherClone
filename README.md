@@ -12,3 +12,7 @@ TODO
 -Add in main menu.<br>
 -Add in leaderboard system<br>
 -Add in status bar for mining<br>
+
+Building
+===========
+Simply run npm install at the root directory to pull down all dependencies, then use grunt to build the final javascript file.
