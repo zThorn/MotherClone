@@ -54,7 +54,44 @@
         }
 
       
-        //This is the primary method to add in a "Blank"(Currently sky) tile at a 
+    
+        update() {
+            var iterations = 1;
+
+            this.game.physics.arcade.collide(this.player, this.ground);
+            this.player.body.velocity.x = 0;
+            this.player.update();
+            
+
+            if (this.game.input.mousePointer.isDown && this.game.input.mousePointer.duration > 100 * this.player.drillLevel) {
+                if (this.game.input.mousePointer.duration > 100 * this.player.drillLevel && this.game.input.mousePointer.duration < 100 * this.player.drillLevel + 50) {
+                    this.removeTile();
+                    this.timeCheck = this.game.time.time;
+                } else if (this.game.time.time - this.timeCheck > 100 * this.player.drillLevel) {
+                    this.removeTile();
+                    this.timeCheck = this.game.time.time;
+                }
+            }
+            if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.gasStation.overlap(this.player) &&
+                 this.player.cash >= 5 && this.player.fuel< this.player.fuelTank) {
+                         this.gasStation.fill(this.player);
+
+            } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.vendor.overlap(this.player)) {
+                this.vendor.isVisible(true);
+              
+            } else if (this.vendor.x + 100 < this.player.x || this.vendor.x - 100 > this.player.x ||
+                       this.game.input.keyboard.isDown(Phaser.Keyboard.ESC)) {
+                this.vendor.isVisible(false);
+            } 
+
+            this.fuelText.setText("Fuel: "+this.player.fuel.toString()+" / "+this.player.fuelTank.toString());
+            this.scoreText.setText("Cash: $"+this.player.cash.toString());
+            this.fpsText.setText("FPS: " + this.game.time.fps.toString());
+
+            this.drillText.setText("Drill: " + this.player.drillLevel.toString());
+        }
+
+            //This is the primary method to add in a "Blank"(Currently sky) tile at a 
         //location located directly below the player
         removeTile() {
             var x = Math.floor(this.player.x/32);
@@ -135,40 +172,5 @@
 
         }
 
-        update() {
-            var iterations = 1;
-
-            this.game.physics.arcade.collide(this.player, this.ground);
-            this.player.body.velocity.x = 0;
-            this.player.update();
-            
-
-            if (this.game.input.mousePointer.isDown && this.game.input.mousePointer.duration > 100 * this.player.drillLevel) {
-                if (this.game.input.mousePointer.duration > 100 * this.player.drillLevel && this.game.input.mousePointer.duration < 100 * this.player.drillLevel + 50) {
-                    this.removeTile();
-                    this.timeCheck = this.game.time.time;
-                } else if (this.game.time.time - this.timeCheck > 100 * this.player.drillLevel) {
-                    this.removeTile();
-                    this.timeCheck = this.game.time.time;
-                }
-            }
-            if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.gasStation.overlap(this.player) &&
-                 this.player.cash >= 5 && this.player.fuel< this.player.fuelTank) {
-                         this.gasStation.fill(this.player);
-
-            } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.vendor.overlap(this.player)) {
-                this.vendor.isVisible(true);
-              
-            } else if (this.vendor.x + 100 < this.player.x || this.vendor.x - 100 > this.player.x ||
-                       this.game.input.keyboard.isDown(Phaser.Keyboard.ESC)) {
-                this.vendor.isVisible(false);
-            } 
-
-            this.fuelText.setText("Fuel: "+this.player.fuel.toString()+" / "+this.player.fuelTank.toString());
-            this.scoreText.setText("Cash: $"+this.player.cash.toString());
-            this.fpsText.setText("FPS: " + this.game.time.fps.toString());
-
-            this.drillText.setText("Drill: " + this.player.drillLevel.toString());
-        }
     }
 } 

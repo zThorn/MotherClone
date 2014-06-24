@@ -113,6 +113,37 @@ var Wallaby;
             this.populateWorld();
         };
 
+        Level.prototype.update = function () {
+            var iterations = 1;
+
+            this.game.physics.arcade.collide(this.player, this.ground);
+            this.player.body.velocity.x = 0;
+            this.player.update();
+
+            if (this.game.input.mousePointer.isDown && this.game.input.mousePointer.duration > 100 * this.player.drillLevel) {
+                if (this.game.input.mousePointer.duration > 100 * this.player.drillLevel && this.game.input.mousePointer.duration < 100 * this.player.drillLevel + 50) {
+                    this.removeTile();
+                    this.timeCheck = this.game.time.time;
+                } else if (this.game.time.time - this.timeCheck > 100 * this.player.drillLevel) {
+                    this.removeTile();
+                    this.timeCheck = this.game.time.time;
+                }
+            }
+            if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.gasStation.overlap(this.player) && this.player.cash >= 5 && this.player.fuel < this.player.fuelTank) {
+                this.gasStation.fill(this.player);
+            } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.vendor.overlap(this.player)) {
+                this.vendor.isVisible(true);
+            } else if (this.vendor.x + 100 < this.player.x || this.vendor.x - 100 > this.player.x || this.game.input.keyboard.isDown(Phaser.Keyboard.ESC)) {
+                this.vendor.isVisible(false);
+            }
+
+            this.fuelText.setText("Fuel: " + this.player.fuel.toString() + " / " + this.player.fuelTank.toString());
+            this.scoreText.setText("Cash: $" + this.player.cash.toString());
+            this.fpsText.setText("FPS: " + this.game.time.fps.toString());
+
+            this.drillText.setText("Drill: " + this.player.drillLevel.toString());
+        };
+
         //This is the primary method to add in a "Blank"(Currently sky) tile at a
         //location located directly below the player
         Level.prototype.removeTile = function () {
@@ -187,37 +218,6 @@ else if (chance > .8)
             i.alpha = 1;
             this.game.add.tween(i).to({ alpha: 0 }, 500, Phaser.Easing.Linear.None, true, 0, 0, false);
             this.game.add.tween(i).to({ x: this.player.x - 200, y: this.player.y - 250 }, 1000, Phaser.Easing.Linear.None, true, 0, 0, false);
-        };
-
-        Level.prototype.update = function () {
-            var iterations = 1;
-
-            this.game.physics.arcade.collide(this.player, this.ground);
-            this.player.body.velocity.x = 0;
-            this.player.update();
-
-            if (this.game.input.mousePointer.isDown && this.game.input.mousePointer.duration > 100 * this.player.drillLevel) {
-                if (this.game.input.mousePointer.duration > 100 * this.player.drillLevel && this.game.input.mousePointer.duration < 100 * this.player.drillLevel + 50) {
-                    this.removeTile();
-                    this.timeCheck = this.game.time.time;
-                } else if (this.game.time.time - this.timeCheck > 100 * this.player.drillLevel) {
-                    this.removeTile();
-                    this.timeCheck = this.game.time.time;
-                }
-            }
-            if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.gasStation.overlap(this.player) && this.player.cash >= 5 && this.player.fuel < this.player.fuelTank) {
-                this.gasStation.fill(this.player);
-            } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.vendor.overlap(this.player)) {
-                this.vendor.isVisible(true);
-            } else if (this.vendor.x + 100 < this.player.x || this.vendor.x - 100 > this.player.x || this.game.input.keyboard.isDown(Phaser.Keyboard.ESC)) {
-                this.vendor.isVisible(false);
-            }
-
-            this.fuelText.setText("Fuel: " + this.player.fuel.toString() + " / " + this.player.fuelTank.toString());
-            this.scoreText.setText("Cash: $" + this.player.cash.toString());
-            this.fpsText.setText("FPS: " + this.game.time.fps.toString());
-
-            this.drillText.setText("Drill: " + this.player.drillLevel.toString());
         };
         return Level;
     })(Phaser.State);
@@ -335,7 +335,8 @@ var Wallaby;
             _super.call(this, game, x, y, 'vendor', 0);
             this.drill_upgrades = 1;
             this.multiplier = 1.5;
-            this.initial_cost = 100;
+            this.drillCost = 100;
+            this.fuelCost = 100;
 
             this.anchor.setTo(0.5, 0);
 
@@ -345,13 +346,13 @@ var Wallaby;
             this.shopBackground.fixedToCamera = true;
             this.game.add.existing(this.shopBackground);
 
-            this.buyButton = new Phaser.Button(this.game, 585, 275, 'buy');
-            this.buyButton.visible = false;
-            this.buyButton.fixedToCamera = true;
-            this.game.add.existing(this.buyButton);
-            this.buyButton.inputEnabled = true;
-            this.buyButton.events.onInputDown.add(function () {
-                this.vendor.buyButtonClick(player);
+            this.drillBuyButton = new Phaser.Button(this.game, 585, 275, 'buy');
+            this.drillBuyButton.visible = false;
+            this.drillBuyButton.fixedToCamera = true;
+            this.game.add.existing(this.drillBuyButton);
+            this.drillBuyButton.inputEnabled = true;
+            this.drillBuyButton.events.onInputDown.add(function () {
+                this.drillButtonClick(player);
             }, this);
 
             this.drillIcon = new Phaser.Sprite(this.game, 400, 275, 'drillUpgrade');
@@ -359,13 +360,33 @@ var Wallaby;
             this.drillIcon.fixedToCamera = true;
             this.game.add.existing(this.drillIcon);
 
+            this.fuelBuyButton = new Phaser.Button(this.game, 585, 355, 'buy');
+            this.fuelBuyButton.visible = false;
+            this.fuelBuyButton.fixedToCamera = true;
+            this.game.add.existing(this.fuelBuyButton);
+            this.fuelBuyButton.inputEnabled = true;
+            this.fuelBuyButton.events.onInputDown.add(function () {
+                this.fuelButtonClick(player);
+            }, this);
+
             this.game.add.existing(this);
         }
-        Vendor.prototype.buyButtonClick = function (player) {
-            if (player.cash >= this.multiplier * this.initial_cost) {
-                player.cash -= this.multiplier * this.initial_cost;
+        Vendor.prototype.drillButtonClick = function (player) {
+            if (player.cash >= this.multiplier * this.drillCost) {
+                player.cash -= Math.floor(this.multiplier * this.drillCost);
+                this.drillCost = Math.floor(this.multiplier * this.drillCost);
                 this.drill_upgrades += 1;
                 player.drillLevel += 1;
+            }
+
+            return;
+        };
+
+        Vendor.prototype.fuelButtonClick = function (player) {
+            if (player.cash >= this.multiplier * this.fuelCost) {
+                player.cash -= Math.floor(this.multiplier * this.fuelCost);
+                this.fuelCost = Math.floor(this.fuelCost * this.multiplier);
+                player.fuelTank = Math.floor(player.fuelTank * this.multiplier);
             }
 
             return;
@@ -374,11 +395,13 @@ var Wallaby;
         Vendor.prototype.isVisible = function (param) {
             if (param) {
                 this.shopBackground.visible = true;
-                this.buyButton.visible = true;
+                this.fuelBuyButton.visible = true;
+                this.drillBuyButton.visible = true;
                 this.drillIcon.visible = true;
             } else {
                 this.shopBackground.visible = false;
-                this.buyButton.visible = false;
+                this.fuelBuyButton.visible = false;
+                this.drillBuyButton.visible = false;
                 this.drillIcon.visible = false;
             }
         };
