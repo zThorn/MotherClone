@@ -23,4 +23,4 @@ TODO
 
 Building
 ===========
-Simply run npm install at the root directory to pull down all dependencies, then use grunt to build the final javascript file.
+Simply run npm install at the root directory to pull down all dependencies, then use grunt to build the final javascript file.  You can also use my precompiled javascript file(game.js), which is located in the /src/ directory!
