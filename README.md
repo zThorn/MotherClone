@@ -1,6 +1,13 @@
 MotherClone
 ===========
 A tile-based sidescrolling game written in typescript focused primarily around mineral collection.  Digging up rare earth metals and upgrading your mine cart is the primary objective, with cash being earned upon succesfully mining the resources.
+
+Controls
+===========
+WASD for movement
+Spacebar to jump
+Click to mine
+
 TODO
 ===========
 -Add in particle effects for digging.<br>
@@ -12,6 +19,7 @@ TODO
 -Add in main menu.<br>
 -Add in leaderboard system<br>
 -Add in status bar for mining<br>
+-Add in fall damage for ship? <br>
 
 Building
 ===========
