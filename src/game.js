@@ -100,7 +100,7 @@ var Wallaby;
             this.txt.fixedToCamera = true;
             this.fuelText = this.game.add.text(this.game.world.centerX - 475, 0, 'Fuel: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
 
-            //Score Text
+            //Cash Text
             this.scoreText = this.game.add.text(this.game.world.centerX - 475, 50, 'Cash: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
 
             //FPS
@@ -122,10 +122,10 @@ var Wallaby;
 
             if (this.game.input.mousePointer.isDown && this.game.input.mousePointer.duration > 100 * this.player.drillLevel) {
                 if (this.game.input.mousePointer.duration > 100 * this.player.drillLevel && this.game.input.mousePointer.duration < 100 * this.player.drillLevel + 50) {
-                    this.removeTile();
+                    this.removeTile(this.game.input.mousePointer.worldX, this.game.input.mousePointer.worldY);
                     this.timeCheck = this.game.time.time;
                 } else if (this.game.time.time - this.timeCheck > 100 * this.player.drillLevel) {
-                    this.removeTile();
+                    this.removeTile(this.game.input.mousePointer.worldX, this.game.input.mousePointer.worldY);
                     this.timeCheck = this.game.time.time;
                 }
             }
@@ -146,13 +146,19 @@ var Wallaby;
 
         //This is the primary method to add in a "Blank"(Currently sky) tile at a
         //location located directly below the player
-        Level.prototype.removeTile = function () {
-            var x = Math.floor(this.player.x / 32);
-            var y = Math.ceil((this.player.y / 32) + 1);
-            var tile = this.map.getTile(x, y).index;
+        Level.prototype.removeTile = function (x, y) {
+            x = Math.floor(x / 32);
+            y = Math.floor(y / 32);
 
-            if (this.game.input.mousePointer.timeDown - this.game.input.mousePointer.timeUp >= 100 && this.player.fuel > 0) {
-                this.player.cash = this.player.cash + this.getTileValue(tile);
+            var tileIndex = this.map.getTile(x, y).index;
+            this.tile = this.map.getTile(x, y);
+
+            //Prevents rapid block removal\
+            var test = this.tile.collideUp;
+            if (this.player.fuel > 0) {
+                console.log("X: " + x.toString());
+                console.log("Y: " + y.toString());
+                this.player.cash = this.player.cash + this.getTileValue(tileIndex);
                 this.player.fuel -= 5;
                 this.map.putTile(4, x, y);
             }
