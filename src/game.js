@@ -337,6 +337,7 @@ var Wallaby;
             this.multiplier = 1.5;
             this.drillCost = 100;
             this.fuelCost = 100;
+            this.subAmount = 0;
 
             this.anchor.setTo(0.5, 0);
 
@@ -373,10 +374,12 @@ var Wallaby;
         }
         Vendor.prototype.drillButtonClick = function (player) {
             if (player.cash >= this.multiplier * this.drillCost) {
-                player.cash -= Math.floor(this.multiplier * this.drillCost);
+                this.subAmount = Math.floor(this.multiplier * this.drillCost);
+                player.cash -= this.subAmount;
                 this.drillCost = Math.floor(this.multiplier * this.drillCost);
                 this.drill_upgrades += 1;
                 player.drillLevel += 1;
+                this.subtractEffect(this.subAmount);
             }
 
             return;
@@ -384,9 +387,11 @@ var Wallaby;
 
         Vendor.prototype.fuelButtonClick = function (player) {
             if (player.cash >= this.multiplier * this.fuelCost) {
-                player.cash -= Math.floor(this.multiplier * this.fuelCost);
+                this.subAmount = Math.floor(this.multiplier * this.fuelCost);
+                player.cash -= this.subAmount;
                 this.fuelCost = Math.floor(this.fuelCost * this.multiplier);
                 player.fuelTank = Math.floor(player.fuelTank * this.multiplier);
+                this.subtractEffect(this.subAmount);
             }
 
             return;
@@ -404,6 +409,13 @@ var Wallaby;
                 this.drillBuyButton.visible = false;
                 this.drillIcon.visible = false;
             }
+        };
+
+        Vendor.prototype.subtractEffect = function (total) {
+            var i = this.game.add.text(this.game.world.centerX - 325, 50, "-" + total.toString(), { fontSize: '12px', fill: 'white', stroke: "black", strokeThickness: 5 });
+            i.alpha = 1;
+            this.game.add.tween(i).to({ alpha: 0 }, 500, Phaser.Easing.Linear.None, true, 0, 0, false);
+            this.game.add.tween(i).to({ x: this.game.world.centerX - 305, y: 50 }, 1000, Phaser.Easing.Linear.None, true, 0, 0, false);
         };
         return Vendor;
     })(Phaser.Sprite);
