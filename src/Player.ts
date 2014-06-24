@@ -2,7 +2,8 @@
 
     export class Player extends Phaser.Sprite {
 
-        fuel: number = 500;
+        fuel: number = 250;
+        fuelTank: number = 250;
         score: number = 0;
         cash: number = 0;
         drillLevel: number = 2;
@@ -43,6 +44,7 @@
 
         }
        
+       //Just a debug method
         restart() {
             this.x = 30;
             this.y = 30;

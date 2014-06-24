@@ -65,6 +65,10 @@ var Wallaby;
 
             this.game.add.existing(this);
         }
+        GasStation.prototype.fill = function (player) {
+            player.fuel += 5;
+            player.cash -= 2;
+        };
         return GasStation;
     })(Phaser.Sprite);
     Wallaby.GasStation = GasStation;
@@ -86,29 +90,10 @@ var Wallaby;
             this.ground = this.map.createLayer('Ground');
             this.ground.resizeWorld();
 
-            this.gasStation = new Wallaby.GasStation(this.game, 128, 160);
-            this.vendor = new Wallaby.Vendor(this.game, 256, 192);
             this.player = new Wallaby.Player(this.game, 32, 32);
-
-            //Shop Assets
-            this.shopBackground = new Phaser.Sprite(this.game, this.player.x + 100, this.player.y + 100, 'shopbackground');
-            this.shopBackground.visible = false;
-            this.shopBackground.fixedToCamera = true;
-            this.game.add.existing(this.shopBackground);
-
-            this.buyButton = new Phaser.Button(this.game, this.player.x + 410, this.player.y + 130, 'buy');
-            this.buyButton.visible = false;
-            this.buyButton.fixedToCamera = true;
-            this.game.add.existing(this.buyButton);
-            this.buyButton.inputEnabled = true;
-            this.buyButton.events.onInputDown.add(function () {
-                this.vendor.buyButtonClick(this.player);
-            }, this);
-
-            this.drillIcon = new Phaser.Sprite(this.game, this.player.x + 130, this.player.y + 130, 'drillUpgrade');
-            this.drillIcon.visible = false;
-            this.drillIcon.fixedToCamera = true;
-            this.game.add.existing(this.drillIcon);
+            this.gasStation = new Wallaby.GasStation(this.game, 128, 160);
+            this.vendor = new Wallaby.Vendor(this.game, this.player, 256, 192);
+            this.player.bringToTop();
 
             //Fuel Text
             this.txt = this.game.add.group();
@@ -220,17 +205,12 @@ else if (chance > .8)
                     this.timeCheck = this.game.time.time;
                 }
             }
-            if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.gasStation.overlap(this.player) && this.player.cash >= 5) {
-                this.player.fuel += 5;
-                this.player.cash -= 2;
+            if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.gasStation.overlap(this.player) && this.player.cash >= 5 && this.player.fuel < this.player.fuelTank) {
+                this.gasStation.fill(this.player);
             } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.vendor.overlap(this.player)) {
-                this.shopBackground.visible = true;
-                this.buyButton.visible = true;
-                this.drillIcon.visible = true;
+                this.vendor.isVisible(true);
             } else if (this.vendor.x + 100 < this.player.x || this.vendor.x - 100 > this.player.x || this.game.input.keyboard.isDown(Phaser.Keyboard.ESC)) {
-                this.shopBackground.visible = false;
-                this.buyButton.visible = false;
-                this.drillIcon.visible = false;
+                this.vendor.isVisible(false);
             }
 
             this.fuelText.setText("Fuel: " + this.player.fuel.toString());
@@ -270,7 +250,8 @@ var Wallaby;
         __extends(Player, _super);
         function Player(game, x, y) {
             _super.call(this, game, x, y, 'player', 0);
-            this.fuel = 500;
+            this.fuel = 250;
+            this.fuelTank = 250;
             this.score = 0;
             this.cash = 0;
             this.drillLevel = 2;
@@ -300,6 +281,7 @@ var Wallaby;
             }
         };
 
+        //Just a debug method
         Player.prototype.restart = function () {
             this.x = 30;
             this.y = 30;
@@ -318,19 +300,19 @@ var Wallaby;
             _super.apply(this, arguments);
         }
         Preloader.prototype.preload = function () {
-            this.game.load.image('player', '/assets/player.png');
-            this.game.load.image('grass', '/assets/grass.png');
-            this.game.load.image('dirt', '/assets/dirt.png');
-            this.game.load.image('sky', '/assets/sky.png');
-            this.game.load.image('blank', '/assets/blank.png');
-            this.game.load.image('drillUpgrade', '/assets/drill_upgrade_icon.png');
+            this.game.load.image('player', 'assets/player.png');
+            this.game.load.image('grass', 'assets/grass.png');
+            this.game.load.image('dirt', 'assets/dirt.png');
+            this.game.load.image('sky', 'assets/sky.png');
+            this.game.load.image('blank', 'assets/blank.png');
+            this.game.load.image('drillUpgrade', 'assets/drill_upgrade_icon.png');
 
-            this.game.load.image('vendor', '/assets/vendor.png');
-            this.game.load.image('gasStation', '/assets/gas_station0.png');
-            this.game.load.tilemap('level', '/assets/spritesheet.json', null, Phaser.Tilemap.TILED_JSON);
-            this.game.load.image('Tiles', '/assets/Tiles.png');
-            this.game.load.image('shopbackground', '/assets/sbg.png');
-            this.game.load.image('buy', '/assets/buybutton.png');
+            this.game.load.image('vendor', 'assets/vendor.png');
+            this.game.load.image('gasStation', 'assets/gas_station0.png');
+            this.game.load.tilemap('level', 'assets/spritesheet.json', null, Phaser.Tilemap.TILED_JSON);
+            this.game.load.image('Tiles', 'assets/Tiles.png');
+            this.game.load.image('shopbackground', 'assets/sbg.png');
+            this.game.load.image('buy', 'assets/buybutton.png');
         };
 
         Preloader.prototype.create = function () {
@@ -349,13 +331,33 @@ var Wallaby;
 (function (Wallaby) {
     var Vendor = (function (_super) {
         __extends(Vendor, _super);
-        function Vendor(game, x, y) {
+        function Vendor(game, player, x, y) {
             _super.call(this, game, x, y, 'vendor', 0);
             this.drill_upgrades = 1;
             this.multiplier = 1.5;
             this.initial_cost = 100;
 
             this.anchor.setTo(0.5, 0);
+
+            //Shop Assets
+            this.shopBackground = new Phaser.Sprite(this.game, 250, 250, 'shopbackground');
+            this.shopBackground.visible = false;
+            this.shopBackground.fixedToCamera = true;
+            this.game.add.existing(this.shopBackground);
+
+            this.buyButton = new Phaser.Button(this.game, 585, 275, 'buy');
+            this.buyButton.visible = false;
+            this.buyButton.fixedToCamera = true;
+            this.game.add.existing(this.buyButton);
+            this.buyButton.inputEnabled = true;
+            this.buyButton.events.onInputDown.add(function () {
+                this.vendor.buyButtonClick(player);
+            }, this);
+
+            this.drillIcon = new Phaser.Sprite(this.game, 400, 275, 'drillUpgrade');
+            this.drillIcon.visible = false;
+            this.drillIcon.fixedToCamera = true;
+            this.game.add.existing(this.drillIcon);
 
             this.game.add.existing(this);
         }
@@ -367,6 +369,18 @@ var Wallaby;
             }
 
             return;
+        };
+
+        Vendor.prototype.isVisible = function (param) {
+            if (param) {
+                this.shopBackground.visible = true;
+                this.buyButton.visible = true;
+                this.drillIcon.visible = true;
+            } else {
+                this.shopBackground.visible = false;
+                this.buyButton.visible = false;
+                this.drillIcon.visible = false;
+            }
         };
         return Vendor;
     })(Phaser.Sprite);

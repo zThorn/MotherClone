@@ -6,6 +6,7 @@
         score: number = 0;
         cash: number = 0;
         drillLevel: number = 2;
+
         constructor(game: Phaser.Game, x: number, y: number) {
 
             super(game, x, y, 'gasStation', 0);
@@ -16,10 +17,9 @@
 
         }
 
-
-
-
-
+        fill(player: Wallaby.Player){
+                player.fuel += 5;
+                player.cash -= 2;
+        }
     }
-
 } 

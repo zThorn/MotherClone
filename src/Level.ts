@@ -16,10 +16,6 @@
         txt: Phaser.Group;
         timeCheck: number;
         vendor: Wallaby.Vendor;
-        buyButton: Phaser.Button;
-        shopBackground: Phaser.Sprite;
-        drillIcon: Phaser.Sprite;
-
 
         create() {       
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -31,29 +27,12 @@
             this.ground = this.map.createLayer('Ground');
             this.ground.resizeWorld();   
 
-            this.gasStation = new GasStation(this.game, 128, 160);
-            this.vendor = new Vendor(this.game, 256, 192);
             this.player = new Player(this.game, 32, 32);
+            this.gasStation = new GasStation(this.game, 128, 160);
+            this.vendor = new Vendor(this.game,this.player, 256, 192);
+            this.player.bringToTop();
 
-            //Shop Assets
-            this.shopBackground = new Phaser.Sprite(this.game, this.player.x + 100, this.player.y + 100, 'shopbackground');
-            this.shopBackground.visible = false;
-            this.shopBackground.fixedToCamera = true;
-            this.game.add.existing(this.shopBackground);
 
-            this.buyButton = new Phaser.Button(this.game, this.player.x + 410, this.player.y + 130, 'buy');
-            this.buyButton.visible = false;
-            this.buyButton.fixedToCamera = true;
-            this.game.add.existing(this.buyButton);
-            this.buyButton.inputEnabled = true;
-            this.buyButton.events.onInputDown.add(function () { this.vendor.buyButtonClick(this.player) }, this);
-
-            this.drillIcon = new Phaser.Sprite(this.game, this.player.x + 130, this.player.y + 130, 'drillUpgrade');
-            this.drillIcon.visible = false;
-            this.drillIcon.fixedToCamera = true;
-            this.game.add.existing(this.drillIcon);
-            
-            
             //Fuel Text
             this.txt = this.game.add.group();
             this.txt.fixedToCamera = true;
@@ -173,18 +152,16 @@
                     this.timeCheck = this.game.time.time;
                 }
             }
-            if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.gasStation.overlap(this.player) && this.player.cash >= 5) {
-                this.player.fuel += 5;
-                this.player.cash -= 2;
+            if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.gasStation.overlap(this.player) &&
+                 this.player.cash >= 5 && this.player.fuel< this.player.fuelTank) {
+                         this.gasStation.fill(this.player);
+
             } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.vendor.overlap(this.player)) {
-                this.shopBackground.visible = true;
-                this.buyButton.visible = true;
-                this.drillIcon.visible = true;
+                this.vendor.isVisible(true);
+              
             } else if (this.vendor.x + 100 < this.player.x || this.vendor.x - 100 > this.player.x ||
                        this.game.input.keyboard.isDown(Phaser.Keyboard.ESC)) {
-                this.shopBackground.visible = false;
-                this.buyButton.visible = false;
-                this.drillIcon.visible = false;
+                this.vendor.isVisible(false);
             } 
 
             this.fuelText.setText("Fuel: "+this.player.fuel.toString());
