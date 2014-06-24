@@ -4,9 +4,9 @@ A tile-based sidescrolling game written in typescript focused primarily around m
 
 Controls
 ===========
-WASD for movement
-Spacebar to jump
-Click to mine
+WASD for movement<br>
+Spacebar to jump<br>
+Click to mine<br>
 
 TODO
 ===========
