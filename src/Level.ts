@@ -164,7 +164,7 @@
                 this.vendor.isVisible(false);
             } 
 
-            this.fuelText.setText("Fuel: "+this.player.fuel.toString());
+            this.fuelText.setText("Fuel: "+this.player.fuel.toString()+" / "+this.player.fuelTank.toString());
             this.scoreText.setText("Cash: $"+this.player.cash.toString());
             this.fpsText.setText("FPS: " + this.game.time.fps.toString());
 
