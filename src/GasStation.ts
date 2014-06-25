@@ -18,8 +18,8 @@
         }
 
         fill(player: Wallaby.Player){
-                player.fuel += 5;
-                player.cash -= 2;
+                player.fuel += 1;
+                player.cash -= 1;
         }
     }
 } 

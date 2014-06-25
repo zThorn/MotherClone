@@ -1,30 +1,33 @@
-﻿module Wallaby {
+module Wallaby {
 
     export class Level extends Phaser.State {
 
-        background: Phaser.Sprite;
-        music: Phaser.Sound;
         player: Wallaby.Player;
         gasStation: Wallaby.GasStation;
+        vendor: Wallaby.Vendor;
+
+        tile: Phaser.Tile;
         map: Phaser.Tilemap;
-        sky: Phaser.TilemapLayer;
         ground: Phaser.TilemapLayer;
+
+        txt: Phaser.Group;  //Contains all text denoted below.
+
         fuelText: Phaser.Text;
         scoreText: Phaser.Text;
         drillText: Phaser.Text;
         fpsText: Phaser.Text;
-        txt: Phaser.Group;
-        timeCheck: number;
-        vendor: Wallaby.Vendor;
-        tile: Phaser.Tile;
-
+      
+        timeCheck: number;  //Used to determine how long the mouse should be pressed
+        
         create() {       
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
+           
             this.game.physics.arcade.gravity.y = 500;
             this.map = this.add.tilemap('level');
             this.map.addTilesetImage('Tiles');
             this.map.setCollisionBetween(1, 3);
             this.map.setCollisionBetween(5, 8);
+
             this.ground = this.map.createLayer('Ground');
             this.ground.resizeWorld();   
 
@@ -32,7 +35,6 @@
             this.gasStation = new GasStation(this.game, 128, 160);
             this.vendor = new Vendor(this.game,this.player, 256, 192);
             this.player.bringToTop();
-
 
             //Fuel Text
             this.txt = this.game.add.group();
@@ -54,15 +56,12 @@
             this.populateWorld();
         }
 
-      
-    
         update() {
             var iterations = 1;
 
             this.game.physics.arcade.collide(this.player, this.ground);
             this.player.body.velocity.x = 0;
-            this.player.update();
-            
+            this.player.update();    
 
             if (this.game.input.mousePointer.isDown && this.game.input.mousePointer.duration > 100 * this.player.drillLevel) {
                 if (this.game.input.mousePointer.duration > 100 * this.player.drillLevel && this.game.input.mousePointer.duration < 100 * this.player.drillLevel + 50) {
@@ -85,34 +84,32 @@
                 this.vendor.isVisible(false);
             } 
 
-            this.fuelText.setText("Fuel: "+this.player.fuel.toString()+" / "+this.player.fuelTank.toString());
+            this.fuelText.setText("Fuel: "+Math.floor(this.player.fuel).toString()+" / "+this.player.fuelTank.toString());
             this.scoreText.setText("Cash: $"+this.player.cash.toString());
             this.fpsText.setText("FPS: " + this.game.time.fps.toString());
 
             this.drillText.setText("Drill: " + this.player.drillLevel.toString());
         }
 
-            //This is the primary method to add in a "Blank"(Currently sky) tile at a 
+        //This is the primary method to add in a "Blank"(Currently sky) tile at a 
         //location located directly below the player
         removeTile(x: number, y:number) {
-                x = Math.floor(x/32);
-                y = Math.floor(y/32);
+            x = Math.floor(x/32);
+            y = Math.floor(y/32);
 
-                var tileIndex = this.map.getTile(x,y).index;
-                this.tile = this.map.getTile(x,y);
-            //Prevents rapid block removal\
-            var test = this.tile.collideUp;
-            if (this.player.fuel>0) {
-                console.log("X: "+x.toString());
-                console.log("Y: "+y.toString());
+            var tileIndex = this.map.getTile(x,y).index;
+            this.tile = this.map.getTile(x,y);
+            //Prevents rapid block removal
+
+
+            if (this.player.fuel>0 &&(this.tile.index != 9 && this.tile.index != 4)) {
+                console.log(this.tile.index);
                 this.player.cash = this.player.cash + this.getTileValue(tileIndex);
-                this.player.fuel -= 5;
-                this.map.putTile(4,x,y);
+                this.player.fuel-=2;
+                this.map.putTile(9,x,y);
+                
             }
         }
-
-
- 
 
         populateWorld() {
             var chance = 0;
@@ -170,12 +167,11 @@
 
         //Handles neat tweening effect when blocks get destroyed
         displayTotal(total: number) {
-            var i = this.game.add.text(this.player.x-10 , this.player.y - 35,"+"+total.toString(), { fontSize: '12px', fill: 'white', stroke: "black", strokeThickness: 5 });
+            var i = this.game.add.text(this.player.x-10 , this.player.y - 35,"+"+total.toString(), 
+                        { fontSize: '12px', fill: 'white', stroke: "black", strokeThickness: 5 });
             i.alpha = 1;
             this.game.add.tween(i).to({ alpha: 0 }, 500, Phaser.Easing.Linear.None, true, 0, 0, false);
             this.game.add.tween(i).to({ x: this.player.x - 200, y: this.player.y - 250 }, 1000, Phaser.Easing.Linear.None, true, 0, 0, false);
-
         }
-
     }
 } 

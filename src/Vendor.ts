@@ -1,4 +1,4 @@
-﻿/// <reference path="reference.ts" />
+/// <reference path="reference.ts" />
 module Wallaby {
 
     export class Vendor extends Phaser.Sprite {
@@ -36,7 +36,7 @@ module Wallaby {
             this.drillIcon.fixedToCamera = true;
             this.game.add.existing(this.drillIcon);
 
-             this.fuelBuyButton = new Phaser.Button(this.game, 585, 355, 'buy');
+            this.fuelBuyButton = new Phaser.Button(this.game, 585, 355, 'buy');
             this.fuelBuyButton.visible = false;
             this.fuelBuyButton.fixedToCamera = true;
             this.game.add.existing(this.fuelBuyButton);
@@ -48,12 +48,12 @@ module Wallaby {
         }
 
         drillButtonClick(player: Wallaby.Player): Function {
-            if (player.cash >= this.multiplier * this.drillCost) {
+            if (player.cash >= this.multiplier * this.drillCost && player.drillLevel>=3) {
                 this.subAmount = Math.floor(this.multiplier * this.drillCost);
                 player.cash -= this.subAmount;
                 this.drillCost  = Math.floor(this.multiplier*this.drillCost);
                 this.drill_upgrades += 1;
-                player.drillLevel += 1
+                player.drillLevel -= 1
                 this.subtractEffect(this.subAmount);
                 }
 
@@ -93,6 +93,8 @@ module Wallaby {
             this.game.add.tween(i).to({ alpha: 0 }, 500, Phaser.Easing.Linear.None, true, 0, 0, false);
             this.game.add.tween(i).to({ x: this.game.world.centerX - 305, y: 50 }, 1000, Phaser.Easing.Linear.None, true, 0, 0, false);
         }
+
+
     }
 
 }  

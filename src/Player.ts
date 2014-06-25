@@ -2,11 +2,11 @@
 
     export class Player extends Phaser.Sprite {
 
-        fuel: number = 250;
-        fuelTank: number = 250;
+        fuel: number = 50;
+        fuelTank: number = 50;
         score: number = 0;
         cash: number = 0;
-        drillLevel: number = 2;
+        drillLevel: number = 10;
         constructor(game: Phaser.Game, x: number, y: number) {
 
             super(game, x, y, 'player', 0);
@@ -28,7 +28,7 @@
            
             if (this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.fuel > 0) {
                 this.body.velocity.y = -250;
-                this.fuel--;
+                this.fuel-= .1;
             }
             if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT) || this.game.input.keyboard.isDown(Phaser.Keyboard.A)) {
                 this.body.velocity.x = -150;

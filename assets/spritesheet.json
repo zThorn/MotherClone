@@ -20,7 +20,7 @@
  "tilesets":[
         {
          "firstgid":1,
-         "image":"spritesheet.png",
+         "image":"Tiles.png",
          "imageheight":104,
          "imagewidth":104,
          "margin":2,
@@ -31,41 +31,6 @@
             },
          "spacing":2,
          "tileheight":32,
-         "tileproperties":
-            {
-             "0":
-                {
-                 "Value":"2"
-                },
-             "1":
-                {
-                 "Value":"10"
-                },
-             "2":
-                {
-                 "Value":"25"
-                },
-             "3":
-                {
-                 "Value":"0"
-                },
-             "4":
-                {
-                 "Value":"1"
-                },
-             "5":
-                {
-                 "Value":"5"
-                },
-             "6":
-                {
-                 "Value":"1"
-                },
-             "7":
-                {
-                 "Value":"50"
-                }
-            },
          "tilewidth":32
         }],
  "tilewidth":32,
