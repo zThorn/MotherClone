@@ -155,7 +155,7 @@ var Wallaby;
             var tileIndex = this.map.getTile(x, y).index;
             this.tile = this.map.getTile(x, y);
 
-            if (this.player.fuel > 0 && (this.tile.index != 9 && this.tile.index != 4)) {
+            if (this.player.fuel > 0 && (this.tile.index != 9 && this.tile.index != 4) && ((32 <= this.player.x - x * 32) || (32 >= x * 32 - this.player.x)) && ((32 >= this.player.y - y * 32) || (32 <= y * 32 - this.player.y))) {
                 console.log(this.tile.index);
                 this.player.cash = this.player.cash + this.getTileValue(tileIndex);
                 this.player.fuel -= 2;
