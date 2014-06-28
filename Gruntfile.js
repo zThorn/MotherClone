@@ -1,6 +1,7 @@
 module.exports = function(grunt){
 
 	grunt.loadNpmTasks("grunt-ts")
+	grunt.loadNpmTasks("grunt-contrib-uglify");
 
 	grunt.initConfig({
 		ts: {
@@ -11,6 +12,13 @@ module.exports = function(grunt){
 				out: 'src/game.js'
 			}
 		},
+		uglify:{
+			my_target: {
+				files:{
+					'src/game.min.js'  :  ['src/game.js']
+				}
+			}
+		}
 
 
 
@@ -18,4 +26,5 @@ module.exports = function(grunt){
 
 
 	grunt.registerTask('default',["ts:dev"]);
+	grunt.registerTask('min', ["uglify:my_target:files"]);
 };
