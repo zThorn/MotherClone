@@ -2,6 +2,8 @@ module Wallaby {
 
     export class Level extends Phaser.State {
 
+        isPaused: boolean;
+
         player: Wallaby.Player;
         gasStation: Wallaby.GasStation;
         vendor: Wallaby.Vendor;
@@ -16,6 +18,7 @@ module Wallaby {
         scoreText: Phaser.Text;
         drillText: Phaser.Text;
         fpsText: Phaser.Text;
+        pauseText: Phaser.Text;
       
         timeCheck: number;  //Used to determine how long the mouse should be pressed
         
@@ -52,6 +55,10 @@ module Wallaby {
             //Drill Level
             this.drillText = this.game.add.text(this.game.world.centerX - 475, 150, 'Drill: ',
                             { fontSize: '32px', fill: 'white', stroke: 'black', strokeThickness: 5 }, this.txt);
+            //Will only be drawn if the game is paused
+            this.pauseText = this.game.add.text(this.game.world.centerX,150,'',
+                            { fontSize:'64px', fill:'red'},this.txt);
+
             this.camera.follow(this.player);
             this.populateWorld();
         }
@@ -83,6 +90,17 @@ module Wallaby {
                        this.game.input.keyboard.isDown(Phaser.Keyboard.ESC)) {
                 this.vendor.isVisible(false);
             } 
+             if(this.game.input.keyboard.isDown(Phaser.Keyboard.ESC)){
+                    this.pauseText.text = 'Paused';
+                    this.player.pause = true;
+                    this.game.physics.arcade.gravity.y = 0;
+            }
+
+            if(this.game.input.keyboard.isDown(Phaser.Keyboard.P)){
+                this.pauseText.text = '';
+                this.player.pause = false;
+                 this.game.physics.arcade.gravity.y = 500;
+            }
 
             this.fuelText.setText("Fuel: "+Math.floor(this.player.fuel).toString()+" / "+this.player.fuelTank.toString());
             this.scoreText.setText("Cash: $"+this.player.cash.toString());

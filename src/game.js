@@ -111,6 +111,10 @@ var Wallaby;
 
             //Drill Level
             this.drillText = this.game.add.text(this.game.world.centerX - 475, 150, 'Drill: ', { fontSize: '32px', fill: 'white', stroke: 'black', strokeThickness: 5 }, this.txt);
+
+            //Will only be drawn if the game is paused
+            this.pauseText = this.game.add.text(this.game.world.centerX, 150, '', { fontSize: '64px', fill: 'red' }, this.txt);
+
             this.camera.follow(this.player);
             this.populateWorld();
         };
@@ -137,6 +141,17 @@ var Wallaby;
                 this.vendor.isVisible(true);
             } else if (this.vendor.x + 100 < this.player.x || this.vendor.x - 100 > this.player.x || this.game.input.keyboard.isDown(Phaser.Keyboard.ESC)) {
                 this.vendor.isVisible(false);
+            }
+            if (this.game.input.keyboard.isDown(Phaser.Keyboard.ESC)) {
+                this.pauseText.text = 'Paused';
+                this.player.pause = true;
+                this.game.physics.arcade.gravity.y = 0;
+            }
+
+            if (this.game.input.keyboard.isDown(Phaser.Keyboard.P)) {
+                this.pauseText.text = '';
+                this.player.pause = false;
+                this.game.physics.arcade.gravity.y = 500;
             }
 
             this.fuelText.setText("Fuel: " + Math.floor(this.player.fuel).toString() + " / " + this.player.fuelTank.toString());
@@ -260,11 +275,11 @@ var Wallaby;
             this.score = 0;
             this.cash = 0;
             this.drillLevel = 10;
+            this.pause = false;
 
             this.anchor.setTo(0.5, 0);
 
             game.physics.enable(this);
-            this.body.bounce.y = 0.2;
             this.body.linearDamping = 1;
             this.body.collideWorldBounds = true;
             this.body.tilePadding.x = 50;
@@ -273,16 +288,27 @@ var Wallaby;
             this.game.add.existing(this);
         }
         Player.prototype.update = function () {
-            if (this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.fuel > 0) {
-                this.body.velocity.y = -250;
-                this.fuel -= .1;
+            if (!this.pause) {
+                this.body.maxVelocity.y = 250;
+                if (this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.fuel > 1) {
+                    this.body.velocity.y = -250;
+                    this.fuel -= .1;
+                }
+                if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT) || this.game.input.keyboard.isDown(Phaser.Keyboard.A)) {
+                    this.body.velocity.x = -150;
+                } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) || this.game.input.keyboard.isDown(Phaser.Keyboard.D)) {
+                    this.body.velocity.x = 150;
+                } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.TILDE)) {
+                    this.restart();
+                }
             }
-            if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT) || this.game.input.keyboard.isDown(Phaser.Keyboard.A)) {
-                this.body.velocity.x = -150;
-            } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) || this.game.input.keyboard.isDown(Phaser.Keyboard.D)) {
-                this.body.velocity.x = 150;
-            } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.TILDE)) {
+
+            if (this.fuel < 1)
                 this.restart();
+
+            if (this.pause) {
+                this.body.maxVelocity.y = 0;
+                this.body.bounce = 0;
             }
         };
 
@@ -290,8 +316,8 @@ var Wallaby;
         Player.prototype.restart = function () {
             this.x = 30;
             this.y = 30;
-            this.fuel = 150;
-            this.cash = 1000;
+            this.fuel = this.fuelTank;
+            this.cash = 0;
         };
         return Player;
     })(Phaser.Sprite);
