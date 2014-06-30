@@ -48,7 +48,6 @@ module Wallaby {
             this.eHover = new Phaser.Sprite(this.game, this.x-8, this.y-32, 'e');
             this.game.add.existing(this.eHover);
             this.eHover.visible = false;
-            this.eHover.alpha = 0;
             this.player = player;
 
             this.game.add.existing(this);
