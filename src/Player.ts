@@ -49,7 +49,6 @@ module Wallaby {
 
             if(this.pause){
                 this.body.maxVelocity.y = 0;
-                this.body.bounce = 0;
             }
         }
        

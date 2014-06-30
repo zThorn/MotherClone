@@ -19,6 +19,9 @@ module Wallaby {
         drillText: Phaser.Text;
         fpsText: Phaser.Text;
         pauseText: Phaser.Text;
+
+
+       eHoverVendor: Phaser.Sprite;
       
         timeCheck: number;  //Used to determine how long the mouse should be pressed
         
@@ -35,8 +38,12 @@ module Wallaby {
             this.ground.resizeWorld();   
 
             this.player = new Player(this.game, 32, 32);
-            this.gasStation = new GasStation(this.game, 128, 160);
+            this.gasStation = new GasStation(this.game, 128, 160, this.player);
             this.vendor = new Vendor(this.game,this.player, 256, 192);
+           
+
+         
+
             this.player.bringToTop();
 
             //Fuel Text
@@ -69,6 +76,8 @@ module Wallaby {
             this.game.physics.arcade.collide(this.player, this.ground);
             this.player.body.velocity.x = 0;
             this.player.update();    
+            this.gasStation.update();
+            this.vendor.update();
 
             if (this.game.input.mousePointer.isDown && this.game.input.mousePointer.duration > 100 * this.player.drillLevel) {
                 if (this.game.input.mousePointer.duration > 100 * this.player.drillLevel && this.game.input.mousePointer.duration < 100 * this.player.drillLevel + 50) {
@@ -79,18 +88,7 @@ module Wallaby {
                     this.timeCheck = this.game.time.time;
                 }
             }
-            if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.gasStation.overlap(this.player) &&
-                 this.player.cash >= 5 && this.player.fuel< this.player.fuelTank) {
-                         this.gasStation.fill(this.player);
-
-            } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.vendor.overlap(this.player)) {
-                this.vendor.isVisible(true);
-              
-            } else if (this.vendor.x + 100 < this.player.x || this.vendor.x - 100 > this.player.x ||
-                       this.game.input.keyboard.isDown(Phaser.Keyboard.ESC)) {
-                this.vendor.isVisible(false);
-            } 
-             if(this.game.input.keyboard.isDown(Phaser.Keyboard.ESC)){
+        else if(this.game.input.keyboard.isDown(Phaser.Keyboard.ESC)){
                     this.pauseText.text = 'Paused';
                     this.player.pause = true;
                     this.game.physics.arcade.gravity.y = 0;
@@ -101,6 +99,10 @@ module Wallaby {
                 this.player.pause = false;
                  this.game.physics.arcade.gravity.y = 500;
             }
+
+          
+
+           
 
             this.fuelText.setText("Fuel: "+Math.floor(this.player.fuel).toString()+" / "+this.player.fuelTank.toString());
             this.scoreText.setText("Cash: $"+this.player.cash.toString());
@@ -123,7 +125,7 @@ module Wallaby {
                 
                 console.log(this.tile.index);
                 this.player.cash = this.player.cash + this.getTileValue(tileIndex);
-                this.player.fuel-=2;
+                this.player.fuel--;
                 this.map.putTile(9,x,y);
                 
             }
@@ -155,7 +157,7 @@ module Wallaby {
 
             switch (index) {
                 case 1: //Tin
-                    total = 5;
+                    total =7;
                     break;
                 case 2: //Gold
                     total = 25;
@@ -165,14 +167,12 @@ module Wallaby {
                     break;
                 case 4:   //Sky tile
                   break;
-                case 5:   //Dirt
-                    total = 1;
+                case 5:   //Dirt || Grass
+                case 7:
+                    total = 5;
                     break;
                 case 6:   //Iron
                     total = 10;
-                    break;
-                case 7: //Grass
-                    total = 1;
                     break;
                 case 8: //Diamond
                     total = 100;

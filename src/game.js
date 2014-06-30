@@ -54,7 +54,7 @@ var Wallaby;
 (function (Wallaby) {
     var GasStation = (function (_super) {
         __extends(GasStation, _super);
-        function GasStation(game, x, y) {
+        function GasStation(game, x, y, player) {
             _super.call(this, game, x, y, 'gasStation', 0);
             this.fuel_fill_rate = 5;
             this.score = 0;
@@ -64,7 +64,25 @@ var Wallaby;
             this.anchor.setTo(0.5, 0);
 
             this.game.add.existing(this);
+
+            this.eHover = new Phaser.Sprite(game, this.x + 8, this.y - 32, 'e');
+            this.game.add.existing(this.eHover);
+            this.eHover.visible = false;
+
+            this.player = player;
         }
+        GasStation.prototype.update = function () {
+            if (this.overlap(this.player)) {
+                this.eHover.visible = true;
+                if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.player.cash >= 5 && this.player.fuel < this.player.fuelTank) {
+                    this.fill(this.player);
+                }
+            }
+
+            if (!this.overlap(this.player))
+                this.eHover.visible = false;
+        };
+
         GasStation.prototype.fill = function (player) {
             player.fuel += 1;
             player.cash -= 1;
@@ -93,8 +111,9 @@ var Wallaby;
             this.ground.resizeWorld();
 
             this.player = new Wallaby.Player(this.game, 32, 32);
-            this.gasStation = new Wallaby.GasStation(this.game, 128, 160);
+            this.gasStation = new Wallaby.GasStation(this.game, 128, 160, this.player);
             this.vendor = new Wallaby.Vendor(this.game, this.player, 256, 192);
+
             this.player.bringToTop();
 
             //Fuel Text
@@ -125,6 +144,8 @@ var Wallaby;
             this.game.physics.arcade.collide(this.player, this.ground);
             this.player.body.velocity.x = 0;
             this.player.update();
+            this.gasStation.update();
+            this.vendor.update();
 
             if (this.game.input.mousePointer.isDown && this.game.input.mousePointer.duration > 100 * this.player.drillLevel) {
                 if (this.game.input.mousePointer.duration > 100 * this.player.drillLevel && this.game.input.mousePointer.duration < 100 * this.player.drillLevel + 50) {
@@ -134,15 +155,7 @@ var Wallaby;
                     this.removeTile(this.game.input.mousePointer.worldX, this.game.input.mousePointer.worldY);
                     this.timeCheck = this.game.time.time;
                 }
-            }
-            if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.gasStation.overlap(this.player) && this.player.cash >= 5 && this.player.fuel < this.player.fuelTank) {
-                this.gasStation.fill(this.player);
-            } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.E) && this.vendor.overlap(this.player)) {
-                this.vendor.isVisible(true);
-            } else if (this.vendor.x + 100 < this.player.x || this.vendor.x - 100 > this.player.x || this.game.input.keyboard.isDown(Phaser.Keyboard.ESC)) {
-                this.vendor.isVisible(false);
-            }
-            if (this.game.input.keyboard.isDown(Phaser.Keyboard.ESC)) {
+            } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.ESC)) {
                 this.pauseText.text = 'Paused';
                 this.player.pause = true;
                 this.game.physics.arcade.gravity.y = 0;
@@ -173,7 +186,7 @@ var Wallaby;
             if (this.player.fuel > 0 && (this.tile.index != 9 && this.tile.index != 4) && ((32 <= this.player.x - x * 32) || (32 >= x * 32 - this.player.x)) && ((32 >= this.player.y - y * 32) || (32 <= y * 32 - this.player.y))) {
                 console.log(this.tile.index);
                 this.player.cash = this.player.cash + this.getTileValue(tileIndex);
-                this.player.fuel -= 2;
+                this.player.fuel--;
                 this.map.putTile(9, x, y);
             }
         };
@@ -204,7 +217,7 @@ else if (chance > .8)
 
             switch (index) {
                 case 1:
-                    total = 5;
+                    total = 7;
                     break;
                 case 2:
                     total = 25;
@@ -215,13 +228,11 @@ else if (chance > .8)
                 case 4:
                     break;
                 case 5:
-                    total = 1;
+                case 7:
+                    total = 5;
                     break;
                 case 6:
                     total = 10;
-                    break;
-                case 7:
-                    total = 1;
                     break;
                 case 8:
                     total = 100;
@@ -308,7 +319,6 @@ var Wallaby;
 
             if (this.pause) {
                 this.body.maxVelocity.y = 0;
-                this.body.bounce = 0;
             }
         };
 
@@ -339,6 +349,7 @@ var Wallaby;
             this.game.load.image('Tiles', 'assets/Tiles.png');
             this.game.load.image('shopbackground', 'assets/sbg.png');
             this.game.load.image('buy', 'assets/buybutton.png');
+            this.game.load.image('e', 'assets/e.png');
         };
 
         Preloader.prototype.create = function () {
@@ -396,8 +407,29 @@ var Wallaby;
                 this.fuelButtonClick(player);
             }, this);
 
+            this.eHover = new Phaser.Sprite(this.game, this.x - 8, this.y - 32, 'e');
+            this.game.add.existing(this.eHover);
+            this.eHover.visible = false;
+            this.eHover.alpha = 0;
+            this.player = player;
+
             this.game.add.existing(this);
         }
+        Vendor.prototype.update = function () {
+            if (this.overlap(this.player)) {
+                this.eHover.visible = true;
+
+                if (this.game.input.keyboard.isDown(Phaser.Keyboard.E)) {
+                    this.isVisible(true);
+                }
+            } else if (this.x + 100 < this.player.x || this.x - 100 > this.player.x || this.game.input.keyboard.isDown(Phaser.Keyboard.ESC)) {
+                this.isVisible(false);
+            }
+
+            if (!this.overlap(this.player))
+                this.eHover.visible = false;
+        };
+
         Vendor.prototype.drillButtonClick = function (player) {
             if (player.cash >= this.multiplier * this.drillCost && player.drillLevel >= 3) {
                 this.subAmount = Math.floor(this.multiplier * this.drillCost);
