@@ -19,9 +19,6 @@ module Wallaby {
         drillText: Phaser.Text;
         fpsText: Phaser.Text;
         pauseText: Phaser.Text;
-
-
-       eHoverVendor: Phaser.Sprite;
       
         timeCheck: number;  //Used to determine how long the mouse should be pressed
         
@@ -40,30 +37,27 @@ module Wallaby {
             this.player = new Player(this.game, 32, 32);
             this.gasStation = new GasStation(this.game, 128, 160, this.player);
             this.vendor = new Vendor(this.game,this.player, 256, 192);
-           
-
-         
 
             this.player.bringToTop();
 
             //Fuel Text
             this.txt = this.game.add.group();
             this.txt.fixedToCamera = true;
-            this.fuelText = this.game.add.text(this.game.world.centerX - 475, 0, 'Fuel: ',
+            this.fuelText = this.game.add.text(this.game.world.x, 0, 'Fuel: ',
                             { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
             //Cash Text
-            this.scoreText = this.game.add.text(this.game.world.centerX - 475, 50, 'Cash: ',
+            this.scoreText = this.game.add.text(this.game.world.x, 50, 'Cash: ',
                             { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
             //FPS
-            this.fpsText = this.game.add.text(this.game.world.centerX - 475, 100, 'FPS: ',
+            this.fpsText = this.game.add.text(this.game.world.x, 100, 'FPS: ',
                             { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
             this.game.time.advancedTiming = true;
 
             //Drill Level
-            this.drillText = this.game.add.text(this.game.world.centerX - 475, 150, 'Drill: ',
+            this.drillText = this.game.add.text(this.game.world.x, 150, 'Drill: ',
                             { fontSize: '32px', fill: 'white', stroke: 'black', strokeThickness: 5 }, this.txt);
             //Will only be drawn if the game is paused
-            this.pauseText = this.game.add.text(this.game.world.centerX,150,'',
+            this.pauseText = this.game.add.text(this.game.world.x,200,'',
                             { fontSize:'64px', fill:'red'},this.txt);
 
             this.camera.follow(this.player);
@@ -100,10 +94,6 @@ module Wallaby {
                  this.game.physics.arcade.gravity.y = 500;
             }
 
-          
-
-           
-
             this.fuelText.setText("Fuel: "+Math.floor(this.player.fuel).toString()+" / "+this.player.fuelTank.toString());
             this.scoreText.setText("Cash: $"+this.player.cash.toString());
             this.fpsText.setText("FPS: " + this.game.time.fps.toString());
@@ -134,7 +124,7 @@ module Wallaby {
         populateWorld() {
             var chance = 0;
             //Generates world 30x100 game tiles.(32x32)
-            for (var i = 0; i < 30; i++) {
+            for (var i = 0; i < 30; i++) {     //This will be greater once I figure saving out.....
                 for (var j = 8; j < 100; j++) {
                     chance = Math.random();
                     if (chance >= .98 && j >= 50)

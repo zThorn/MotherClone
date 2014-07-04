@@ -119,20 +119,20 @@ var Wallaby;
             //Fuel Text
             this.txt = this.game.add.group();
             this.txt.fixedToCamera = true;
-            this.fuelText = this.game.add.text(this.game.world.centerX - 475, 0, 'Fuel: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
+            this.fuelText = this.game.add.text(this.game.world.x, 0, 'Fuel: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
 
             //Cash Text
-            this.scoreText = this.game.add.text(this.game.world.centerX - 475, 50, 'Cash: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
+            this.scoreText = this.game.add.text(this.game.world.x, 50, 'Cash: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
 
             //FPS
-            this.fpsText = this.game.add.text(this.game.world.centerX - 475, 100, 'FPS: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
+            this.fpsText = this.game.add.text(this.game.world.x, 100, 'FPS: ', { fontSize: '32px', fill: 'white', stroke: "black", strokeThickness: 5 }, this.txt);
             this.game.time.advancedTiming = true;
 
             //Drill Level
-            this.drillText = this.game.add.text(this.game.world.centerX - 475, 150, 'Drill: ', { fontSize: '32px', fill: 'white', stroke: 'black', strokeThickness: 5 }, this.txt);
+            this.drillText = this.game.add.text(this.game.world.x, 150, 'Drill: ', { fontSize: '32px', fill: 'white', stroke: 'black', strokeThickness: 5 }, this.txt);
 
             //Will only be drawn if the game is paused
-            this.pauseText = this.game.add.text(this.game.world.centerX, 150, '', { fontSize: '64px', fill: 'red' }, this.txt);
+            this.pauseText = this.game.add.text(this.game.world.x, 200, '', { fontSize: '64px', fill: 'red' }, this.txt);
 
             this.camera.follow(this.player);
             this.populateWorld();
