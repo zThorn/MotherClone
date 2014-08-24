@@ -1,6 +1,6 @@
 MotherClone
 ===========
-A tile-based sidescrolling game written in typescript focused primarily around mineral collection.  Digging up rare earth metals and upgrading your mine cart is the primary objective, with cash being earned upon succesfully mining the resources.
+A tile-based sidescrolling game written with the Phaser framework and typescript focused primarily around mineral collection.  Digging up rare earth metals and upgrading your mine cart is the primary objective, with cash being earned upon succesfully mining the resources.
 
 Controls
 ===========
